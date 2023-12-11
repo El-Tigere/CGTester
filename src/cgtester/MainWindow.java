@@ -15,12 +15,15 @@ public class MainWindow { // TODO: change to JFrame
     private Keys keys;
     private GLEvents glEvents;
     
+    private TesterState testerState;
+    
     public MainWindow() {
         window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         
-        keys = new Keys();
+        testerState = new TesterState();
+        keys = new Keys(testerState);
         window.addKeyListener(keys);
-        glEvents = new GLEvents(keys);
+        glEvents = new GLEvents(testerState);
         window.addGLEventListener(glEvents);
         
         window.setSize(800, 500);

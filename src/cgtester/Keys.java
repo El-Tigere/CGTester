@@ -5,20 +5,20 @@ import com.jogamp.newt.event.KeyListener;
 
 public class Keys implements KeyListener {
     
-    public boolean[] keyStates;
+    private TesterState testerState;
     
-    public Keys() {
-        keyStates = new boolean[256];
+    public Keys(TesterState testerState) {
+        this.testerState = testerState;
     }
     
     @Override
     public void keyPressed(KeyEvent e) {
-        keyStates[e.getKeyCode()] = true;
+        testerState.keyStates[e.getKeyCode()] = true;
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
-        keyStates[e.getKeyCode()] = false;
+        testerState.keyStates[e.getKeyCode()] = false;
     }
     
 }

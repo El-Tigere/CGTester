@@ -6,10 +6,10 @@ import com.jogamp.opengl.GLEventListener;
 
 public class GLEvents implements GLEventListener {
     
-    private boolean[] keyStates;
+    private TesterState testerState;
     
-    public GLEvents(Keys keys) {
-        keyStates = keys.keyStates;
+    public GLEvents(TesterState testerState) {
+        this.testerState = testerState;
     }
     
     @Override
@@ -18,7 +18,7 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void display(GLAutoDrawable drawable) {
-        System.out.println(keyStates[KeyEvent.VK_H]);
+        System.out.println(testerState.keyStates[KeyEvent.VK_H]);
     }
     
     @Override
