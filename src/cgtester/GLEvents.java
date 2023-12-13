@@ -8,6 +8,24 @@ public class GLEvents implements GLEventListener {
     
     private TesterState testerState;
     
+    private FloatBuffer vertices = GLBuffers.newDirectFloatBuffer(new float[] {
+        -0.5f, 0.5f, 0f,
+        0f, -0.5f, 0f,
+        0.5f, 0.5f, 0f,
+        1f, -0.5f, 0f
+    });
+    private IntBuffer vertIndices = GLBuffers.newDirectIntBuffer(new int[] {
+        0, 1, 2,
+        1, 3, 2
+    });
+    
+    private FloatBuffer clearColor = GLBuffers.newDirectFloatBuffer(4);
+    private String vertexShaderCode;
+    private String fragmentShaderCode;
+    private int shaderProgram;
+    private int matrixUniformLocation;
+    private int vao;
+    
     public GLEvents(TesterState testerState) {
         this.testerState = testerState;
     }
