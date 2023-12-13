@@ -23,6 +23,8 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        GL3 gl = drawable.getGL().getGL3();
+        gl.glViewport(0, 0, width, height);
     }
     
     @Override
