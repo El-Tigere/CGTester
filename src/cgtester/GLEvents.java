@@ -1,8 +1,17 @@
 package cgtester;
 
-import com.jogamp.newt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Scanner;
+
+import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.util.GLBuffers;
 
 public class GLEvents implements GLEventListener {
     
@@ -93,7 +102,21 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void display(GLAutoDrawable drawable) {
-        System.out.println(testerState.keyStates[KeyEvent.VK_H]);
+        GL3 gl = drawable.getGL().getGL3();
+        
+        // clear color buffer
+        gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
+        
+        // draw triangles
+        gl.glUseProgram(shaderProgram);
+        gl.glBindVertexArray(vao);
+        gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, new float[] {
+            1f, 0f, 0f, 0f,
+            0f, 1f, 0f, 0f,
+            0f, 0f, 1f, 0f,
+            0f, 0f, 0f, 1f
+        }, 0);
+        gl.glDrawElements(GL3.GL_TRIANGLES, vertIndices.limit(), GL3.GL_UNSIGNED_INT, 0);
     }
     
     @Override
