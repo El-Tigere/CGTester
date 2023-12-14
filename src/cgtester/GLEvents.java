@@ -28,10 +28,67 @@ public class GLEvents implements GLEventListener {
     
     public GLEvents(TesterState testerState) {
         this.testerState = testerState;
+        
+        // load shader code
+        try {
+            vertexShaderCode = loadShaderCode("./src/cgtester/shaders/test.vsh");
+            fragmentShaderCode = loadShaderCode("./src/cgtester/shaders/test.fsh");
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
     public void init(GLAutoDrawable drawable) {
+        GL3 gl = drawable.getGL().getGL3();
+        IntBuffer ib;
+        
+        // set clear color
+        clearColor.put(0, 0f).put(1, 0f).put(2, 0f).put(3, 1f);
+        
+        // create shaders
+        int vertexShader = compileShader(gl, vertexShaderCode, GL3.GL_VERTEX_SHADER);
+        int fragmentShader = compileShader(gl, fragmentShaderCode, GL3.GL_FRAGMENT_SHADER);
+        
+        // create shader programs
+        shaderProgram = linkShaderProgram(gl, vertexShader, fragmentShader);
+        
+        // delete shaders
+        gl.glDeleteShader(vertexShader);
+        gl.glDeleteShader(fragmentShader);
+        
+        // create vao
+        ib = GLBuffers.newDirectIntBuffer(1);
+        gl.glGenVertexArrays(1, ib);
+        vao = ib.get(0);
+        
+        // create vbo
+        ib = GLBuffers.newDirectIntBuffer(1);
+        gl.glGenBuffers(1, ib);
+        int vbo = ib.get(0);
+        
+        // create ebo
+        ib = GLBuffers.newDirectIntBuffer(1);
+        gl.glGenBuffers(1, ib);
+        int ebo = ib.get(0);
+        
+        // setup vao
+        gl.glBindVertexArray(vao);
+        // copy vertex data
+        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo);
+        gl.glBufferData(GL3.GL_ARRAY_BUFFER, vertices.limit() * 4, vertices, GL3.GL_STATIC_DRAW);
+        // copy indices
+        gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ebo);
+        gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, vertIndices.limit() * 4, vertIndices, GL3.GL_STATIC_DRAW);
+        // vertex attributes
+        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 3 * 4 /* size of 3 floats */, 0 /* offset is 0 */);
+        gl.glEnableVertexAttribArray(0);
+        
+        // get uniform location
+        matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
+        
+        // set polygon mode
+        gl.glPolygonMode(GL3.GL_FRONT_AND_BACK, GL3.GL_FILL);
     }
     
     @Override
