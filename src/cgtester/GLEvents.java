@@ -18,10 +18,10 @@ public class GLEvents implements GLEventListener {
     private TesterState testerState;
     
     private FloatBuffer vertices = GLBuffers.newDirectFloatBuffer(new float[] {
-        -0.5f, 0.5f, 0f,
-        0f, -0.5f, 0f,
-        0.5f, 0.5f, 0f,
-        1f, -0.5f, 0f
+        -0.5f, 0.5f, 0f,   1f, 0f, 0f,
+        0f, -0.5f, 0f,     0f, 1f, 0f,
+        0.5f, 0.5f, 0f,    0f, 0f, 1f,
+        1f, -0.5f, 0f,     0f, 0f, 0f
     });
     private IntBuffer vertIndices = GLBuffers.newDirectIntBuffer(new int[] {
         0, 1, 2,
@@ -90,8 +90,10 @@ public class GLEvents implements GLEventListener {
         gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ebo);
         gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, vertIndices.limit() * 4, vertIndices, GL3.GL_STATIC_DRAW);
         // vertex attributes
-        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 3 * 4 /* size of 3 floats */, 0 /* offset is 0 */);
+        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 3 * 4 * 2 /* size of 3 floats */, 0 /* offset is 0 */);
         gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(1, 3, GL3.GL_FLOAT, false, 3 * 4 * 2 /* size of 3 floats */, 3 * 4 /* offset is 0 */);
+        gl.glEnableVertexAttribArray(1);
         
         // get uniform location
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
