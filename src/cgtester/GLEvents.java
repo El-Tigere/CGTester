@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Scanner;
 
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -116,7 +117,7 @@ public class GLEvents implements GLEventListener {
             1f, 0f, 0f, 0f,
             0f, 1f, 0f, 0f,
             0f, 0f, 1f, 0f,
-            0f, 0f, 0f, 1f
+            testerState.keyStates[KeyEvent.VK_H] ? 0.5f : 0f, 0f, 0f, 1f
         }, 0);
         gl.glDrawElements(GL3.GL_TRIANGLES, vertIndices.limit(), GL3.GL_UNSIGNED_INT, 0);
     }
