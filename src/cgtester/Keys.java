@@ -13,12 +13,12 @@ public class Keys implements KeyListener {
     
     @Override
     public void keyPressed(KeyEvent e) {
-        testerState.keyStates[e.getKeyCode()] = true;
+        if(!e.isAutoRepeat()) testerState.keyStates[e.getKeyCode()] = true;
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
-        testerState.keyStates[e.getKeyCode()] = false;
+        if(!e.isAutoRepeat()) testerState.keyStates[e.getKeyCode()] = false;
     }
     
 }
