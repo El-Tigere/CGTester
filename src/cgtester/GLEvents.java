@@ -1,11 +1,17 @@
 package cgtester;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2ES3;
@@ -19,10 +25,10 @@ public class GLEvents implements GLEventListener {
     private TesterState testerState;
     
     private FloatBuffer vertices = GLBuffers.newDirectFloatBuffer(new float[] {
-        -0.5f, 0.5f, 0f,   1f, 0f, 0f,
-        0f, -0.5f, 0f,     0f, 1f, 0f,
-        0.5f, 0.5f, 0f,    0f, 0f, 1f,
-        1f, -0.5f, 0f,     0f, 0f, 0f
+        -0.5f, 0.5f, 0f,    1f, 0f, 0f,   0f, 0f,
+        -0.5f, -0.5f, 0f,   0f, 1f, 0f,   0f, 1f,
+        0.5f, 0.5f, 0f,     0f, 0f, 1f,   1f, 0f,
+        0.5f, -0.5f, 0f,    0f, 0f, 0f,   1f, 1f
     });
     private IntBuffer vertIndices = GLBuffers.newDirectIntBuffer(new int[] {
         0, 1, 2,
@@ -36,6 +42,9 @@ public class GLEvents implements GLEventListener {
     private int matrixUniformLocation;
     private int vao;
     
+    private BufferedImage textureData;
+    private int texture;
+    
     public GLEvents(TesterState testerState) {
         this.testerState = testerState;
         
@@ -43,7 +52,8 @@ public class GLEvents implements GLEventListener {
         try {
             vertexShaderCode = loadShaderCode("./src/cgtester/shaders/test.vsh");
             fragmentShaderCode = loadShaderCode("./src/cgtester/shaders/test.fsh");
-        } catch(FileNotFoundException e) {
+            textureData = ImageIO.read(new File("src/cgtester/resources/test.png"));
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
@@ -62,6 +72,19 @@ public class GLEvents implements GLEventListener {
         
         // create shader programs
         shaderProgram = linkShaderProgram(gl, vertexShader, fragmentShader);
+        
+        // create texture
+        ib = GLBuffers.newDirectIntBuffer(1);
+        gl.glGenTextures(1, ib);
+        texture = ib.get(0);
+        gl.glBindTexture(GL3.GL_TEXTURE_2D, texture);
+        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S, GL3.GL_REPEAT);
+        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
+        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR_MIPMAP_LINEAR);
+        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_NEAREST);
+        Buffer textureBuffer = GLBuffers.newDirectByteBuffer(((DataBufferByte) textureData.getData().getDataBuffer()).getData());
+        gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_RGB, textureData.getWidth(), textureData.getHeight(), 0, GL3.GL_BGR, GL3.GL_UNSIGNED_BYTE, textureBuffer);
+        gl.glGenerateMipmap(GL3.GL_TEXTURE_2D);
         
         // delete shaders
         gl.glDeleteShader(vertexShader);
@@ -91,10 +114,12 @@ public class GLEvents implements GLEventListener {
         gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ebo);
         gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, vertIndices.limit() * 4, vertIndices, GL3.GL_STATIC_DRAW);
         // vertex attributes
-        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 3 * 4 * 2 /* size of 3 floats */, 0 /* offset is 0 */);
+        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 8 * 4 /* size of 3 floats */, 0 /* offset is 0 */);
         gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(1, 3, GL3.GL_FLOAT, false, 3 * 4 * 2 /* size of 3 floats */, 3 * 4 /* offset is 0 */);
+        gl.glVertexAttribPointer(1, 3, GL3.GL_FLOAT, false, 8 * 4 /* size of 3 floats */, 3 * 4 /* offset is 0 */);
         gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(2, 2, GL3.GL_FLOAT, false, 8 * 4 /* size of 3 floats */, 6 * 4 /* offset is 0 */);
+        gl.glEnableVertexAttribArray(2);
         
         // get uniform location
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
