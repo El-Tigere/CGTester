@@ -26,7 +26,7 @@ public class MainWindow { // TODO: change to JFrame
         glEvents = new GLEvents(testerState);
         window.addGLEventListener(glEvents);
         
-        window.setSize(800, 500);
+        window.setSize(800, 800);
         window.setTitle("CGTester");
         
         animator = new Animator();

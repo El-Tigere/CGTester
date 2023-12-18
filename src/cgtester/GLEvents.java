@@ -40,6 +40,7 @@ public class GLEvents implements GLEventListener {
     private String fragmentShaderCode;
     private int shaderProgram;
     private int matrixUniformLocation;
+    private int samplerUniformLocation;
     private int vao;
     
     private BufferedImage textureData;
@@ -74,6 +75,7 @@ public class GLEvents implements GLEventListener {
         shaderProgram = linkShaderProgram(gl, vertexShader, fragmentShader);
         
         // create texture
+        gl.glActiveTexture(GL3.GL_TEXTURE0);
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenTextures(1, ib);
         texture = ib.get(0);
@@ -123,6 +125,7 @@ public class GLEvents implements GLEventListener {
         
         // get uniform location
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
+        samplerUniformLocation = gl.glGetUniformLocation(shaderProgram, "testSampler");
         
         // set polygon mode
         gl.glPolygonMode(GL3.GL_FRONT_AND_BACK, GL3.GL_FILL);
@@ -138,6 +141,7 @@ public class GLEvents implements GLEventListener {
         // draw triangles
         gl.glUseProgram(shaderProgram);
         gl.glBindVertexArray(vao);
+        gl.glUniform1i(samplerUniformLocation, 0);
         gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, new float[] {
             1f, 0f, 0f, 0f,
             0f, 1f, 0f, 0f,
