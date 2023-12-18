@@ -20,28 +20,30 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.GLBuffers;
 
+import cgtester.scene.Mesh;
+
 public class GLEvents implements GLEventListener {
     
     private TesterState testerState;
     
-    private FloatBuffer vertices = GLBuffers.newDirectFloatBuffer(new float[] {
+    private float[] vertices = new float[] {
         -0.5f, 0.5f, 0f,    1f, 0f, 0f,   0f, 0f,
         -0.5f, -0.5f, 0f,   0f, 1f, 0f,   0f, 1f,
         0.5f, 0.5f, 0f,     0f, 0f, 1f,   1f, 0f,
         0.5f, -0.5f, 0f,    0f, 0f, 0f,   1f, 1f
-    });
-    private IntBuffer vertIndices = GLBuffers.newDirectIntBuffer(new int[] {
+    };
+    private int[] vertIndices = new int[] {
         0, 1, 2,
         1, 3, 2
-    });
+    };
     
     private FloatBuffer clearColor = GLBuffers.newDirectFloatBuffer(4);
+    private Mesh mesh;
     private String vertexShaderCode;
     private String fragmentShaderCode;
     private int shaderProgram;
     private int matrixUniformLocation;
     private int samplerUniformLocation;
-    private int vao;
     
     private BufferedImage textureData;
     private int texture;
@@ -66,6 +68,9 @@ public class GLEvents implements GLEventListener {
         
         // set clear color
         clearColor.put(0, 0f).put(1, 0f).put(2, 0f).put(3, 1f);
+        
+        // load Mesh
+        mesh = Mesh.fromArrays(gl, vertices, vertIndices);
         
         // create shaders
         int vertexShader = compileShader(gl, vertexShaderCode, GL3.GL_VERTEX_SHADER);
@@ -92,37 +97,6 @@ public class GLEvents implements GLEventListener {
         gl.glDeleteShader(vertexShader);
         gl.glDeleteShader(fragmentShader);
         
-        // create vao
-        ib = GLBuffers.newDirectIntBuffer(1);
-        gl.glGenVertexArrays(1, ib);
-        vao = ib.get(0);
-        
-        // create vbo
-        ib = GLBuffers.newDirectIntBuffer(1);
-        gl.glGenBuffers(1, ib);
-        int vbo = ib.get(0);
-        
-        // create ebo
-        ib = GLBuffers.newDirectIntBuffer(1);
-        gl.glGenBuffers(1, ib);
-        int ebo = ib.get(0);
-        
-        // setup vao
-        gl.glBindVertexArray(vao);
-        // copy vertex data
-        gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo);
-        gl.glBufferData(GL3.GL_ARRAY_BUFFER, vertices.limit() * 4, vertices, GL3.GL_STATIC_DRAW);
-        // copy indices
-        gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, ebo);
-        gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, vertIndices.limit() * 4, vertIndices, GL3.GL_STATIC_DRAW);
-        // vertex attributes
-        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 8 * 4 /* size of 3 floats */, 0 /* offset is 0 */);
-        gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(1, 3, GL3.GL_FLOAT, false, 8 * 4 /* size of 3 floats */, 3 * 4 /* offset is 0 */);
-        gl.glEnableVertexAttribArray(1);
-        gl.glVertexAttribPointer(2, 2, GL3.GL_FLOAT, false, 8 * 4 /* size of 3 floats */, 6 * 4 /* offset is 0 */);
-        gl.glEnableVertexAttribArray(2);
-        
         // get uniform location
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
         samplerUniformLocation = gl.glGetUniformLocation(shaderProgram, "testSampler");
@@ -140,7 +114,7 @@ public class GLEvents implements GLEventListener {
         
         // draw triangles
         gl.glUseProgram(shaderProgram);
-        gl.glBindVertexArray(vao);
+        mesh.bindVAO();
         gl.glUniform1i(samplerUniformLocation, 0);
         gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, new float[] {
             1f, 0f, 0f, 0f,
@@ -148,7 +122,7 @@ public class GLEvents implements GLEventListener {
             0f, 0f, 1f, 0f,
             testerState.keyStates[KeyEvent.VK_H] ? 0.5f : 0f, 0f, 0f, 1f
         }, 0);
-        gl.glDrawElements(GL3.GL_TRIANGLES, vertIndices.limit(), GL3.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL3.GL_TRIANGLES, mesh.getElementCount(), GL3.GL_UNSIGNED_INT, 0);
     }
     
     @Override
