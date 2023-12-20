@@ -28,28 +28,25 @@ public class Mesh {
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenVertexArrays(1, ib);
         m.vao = ib.get(0);
+        gl.glBindVertexArray(m.vao);
         
         // create vbo
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenBuffers(1, ib);
         m.vbo = ib.get(0);
-        
-        // create ebo
-        ib = GLBuffers.newDirectIntBuffer(1);
-        gl.glGenBuffers(1, ib);
-        m.ebo = ib.get(0);
-        
         // copy vertex data
         m.vertexDataBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, m.vbo);
         gl.glBufferData(GL3.GL_ARRAY_BUFFER, m.vertexDataBuffer.limit() * 4, m.vertexDataBuffer, GL3.GL_STATIC_DRAW);
         
+        // create ebo
+        ib = GLBuffers.newDirectIntBuffer(1);
+        gl.glGenBuffers(1, ib);
+        m.ebo = ib.get(0);
         // copy indices
         m.faceIndicesBuffer = GLBuffers.newDirectIntBuffer(faceIndices);
         gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, m.ebo);
         gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, m.faceIndicesBuffer.limit() * 4, m.faceIndicesBuffer, GL3.GL_STATIC_DRAW);
-        
-        gl.glBindVertexArray(m.vao);
         
         // vertex attributes
         gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 8 * 4, 0);
