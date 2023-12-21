@@ -18,12 +18,15 @@ import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.util.GLBuffers;
 
 import cgtester.scene.Mesh;
+import cgtester.scene.Scene;
 
 public class GLEvents implements GLEventListener {
     
+    private Scene scene;
     private TesterState testerState;
     
     private float[] vertices = new float[] {
@@ -48,8 +51,9 @@ public class GLEvents implements GLEventListener {
     private BufferedImage textureData;
     private int texture;
     
-    public GLEvents(TesterState testerState) {
-        this.testerState = testerState;
+    public GLEvents(Scene scene) {
+        this.scene = scene;
+        testerState = scene.getTesterState();
         
         // load shader code
         try {
@@ -109,6 +113,12 @@ public class GLEvents implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
         
+        // update scene
+        if(testerState.keyStates[KeyEvent.VK_W]) scene.getMainCamera().position.add(0f, 0f, -0.1f);
+        if(testerState.keyStates[KeyEvent.VK_A]) scene.getMainCamera().position.add(-0.1f, 0f, 0f);
+        if(testerState.keyStates[KeyEvent.VK_S]) scene.getMainCamera().position.add(0f, 0f, 0.1f);
+        if(testerState.keyStates[KeyEvent.VK_D]) scene.getMainCamera().position.add(0.1f, 0f, 0f);
+
         // clear color buffer
         gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
         
@@ -116,12 +126,8 @@ public class GLEvents implements GLEventListener {
         gl.glUseProgram(shaderProgram);
         mesh.bindVAO();
         gl.glUniform1i(samplerUniformLocation, 0);
-        gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, new float[] {
-            1f, 0f, 0f, 0f,
-            0f, 1f, 0f, 0f,
-            0f, 0f, 1f, 0f,
-            testerState.keyStates[KeyEvent.VK_H] ? 0.5f : 0f, 0f, 0f, 1f
-        }, 0);
+        Matrix4f matrix = scene.getMainCamera().getCameraMatrix();
+        gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, matrix.get(new float[16]), 0);
         gl.glDrawElements(GL3.GL_TRIANGLES, mesh.getElementCount(), GL3.GL_UNSIGNED_INT, 0);
     }
     

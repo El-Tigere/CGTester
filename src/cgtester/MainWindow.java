@@ -7,6 +7,8 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.Animator;
 
+import cgtester.scene.Scene;
+
 public class MainWindow { // TODO: change to JFrame
     
     private GLWindow window;
@@ -15,15 +17,15 @@ public class MainWindow { // TODO: change to JFrame
     private Keys keys;
     private GLEvents glEvents;
     
-    private TesterState testerState;
+    private Scene scene;
     
     public MainWindow() {
         window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         
-        testerState = new TesterState();
-        keys = new Keys(testerState);
+        scene = Scene.createTestScene();
+        keys = new Keys(scene.getTesterState());
         window.addKeyListener(keys);
-        glEvents = new GLEvents(testerState);
+        glEvents = new GLEvents(scene);
         window.addGLEventListener(glEvents);
         
         window.setSize(800, 800);
