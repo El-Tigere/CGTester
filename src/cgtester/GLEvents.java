@@ -118,6 +118,8 @@ public class GLEvents implements GLEventListener {
         if(testerState.keyStates[KeyEvent.VK_A]) scene.getMainCamera().position.add(-0.1f, 0f, 0f);
         if(testerState.keyStates[KeyEvent.VK_S]) scene.getMainCamera().position.add(0f, 0f, 0.1f);
         if(testerState.keyStates[KeyEvent.VK_D]) scene.getMainCamera().position.add(0.1f, 0f, 0f);
+        if(testerState.keyStates[KeyEvent.VK_E]) scene.getMainCamera().position.add(0f, 0.1f, 0f);
+        if(testerState.keyStates[KeyEvent.VK_Q]) scene.getMainCamera().position.add(0f, -0.1f, 0f);
 
         // clear color buffer
         gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
