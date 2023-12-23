@@ -19,8 +19,6 @@ import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.math.Matrix4f;
-import com.jogamp.opengl.math.Quaternion;
-import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.util.GLBuffers;
 
 import cgtester.scene.Mesh;
@@ -124,17 +122,7 @@ public class GLEvents implements GLEventListener {
         lastNanos = currentNanos;
         
         // update scene
-        if(testerState.keyStates[KeyEvent.VK_UP]) scene.getMainCamera().rotation.add(1f * deltaTime, 0f, 0f);
-        if(testerState.keyStates[KeyEvent.VK_DOWN]) scene.getMainCamera().rotation.add(-1f * deltaTime, 0f, 0f);
-        if(testerState.keyStates[KeyEvent.VK_LEFT]) scene.getMainCamera().rotation.add(0f, 1f * deltaTime, 0f);
-        if(testerState.keyStates[KeyEvent.VK_RIGHT]) scene.getMainCamera().rotation.add(0f, -1f * deltaTime, 0f);
-        Quaternion q = new Quaternion().setFromEuler(scene.getMainCamera().rotation);
-        if(testerState.keyStates[KeyEvent.VK_W]) scene.getMainCamera().position.add(q.rotateVector(new Vec3f(0f, 0f, -1f * deltaTime), new Vec3f()));
-        if(testerState.keyStates[KeyEvent.VK_A]) scene.getMainCamera().position.add(q.rotateVector(new Vec3f(-1f * deltaTime, 0f, 0f), new Vec3f()));
-        if(testerState.keyStates[KeyEvent.VK_S]) scene.getMainCamera().position.add(q.rotateVector(new Vec3f(0f, 0f, 1f * deltaTime), new Vec3f()));
-        if(testerState.keyStates[KeyEvent.VK_D]) scene.getMainCamera().position.add(q.rotateVector(new Vec3f(1f * deltaTime, 0f, 0f), new Vec3f()));
-        if(testerState.keyStates[KeyEvent.VK_E]) scene.getMainCamera().position.add(q.rotateVector(new Vec3f(0f, 1f * deltaTime, 0f), new Vec3f()));
-        if(testerState.keyStates[KeyEvent.VK_Q]) scene.getMainCamera().position.add(q.rotateVector(new Vec3f(0f, -1f * deltaTime, 0f), new Vec3f()));
+        scene.getMainCamera().update(testerState, deltaTime);
 
         // clear color buffer
         gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
