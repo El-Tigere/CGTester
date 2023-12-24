@@ -14,6 +14,12 @@ public class Transform {
         this.scale = scale;
     }
     
+    public Transform() {
+        position = new Vec3f(0f, 0f, 0f);
+        rotation = new Vec3f(0f, 0f, 0f);
+        scale = new Vec3f(1f, 1f, 1f);
+    }
+    
     public Matrix4f getTransformationMatrix() {
         Matrix4f transformTranslation = new Matrix4f().setToTranslation(position.mul(-1));
         Matrix4f transformRotation = new Matrix4f().setToRotation(new Quaternion().setFromEuler(rotation).invert());
