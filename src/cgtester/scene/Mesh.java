@@ -10,10 +10,9 @@ import com.jogamp.opengl.util.GLBuffers;
 
 public class Mesh {
     
-    private int vao, vbo, ebo;
     private GL3 gl;
-    private FloatBuffer vertexDataBuffer;
-    private IntBuffer faceIndicesBuffer;
+    private int vao, vbo, ebo;
+    private int indexCount;
     
     private Mesh(GL3 gl) {
         this.gl = gl;
@@ -21,7 +20,7 @@ public class Mesh {
     
     public static Mesh fromArrays(GL3 gl, float[] vertexData, int[] faceIndices) {
         Mesh m = new Mesh(gl);
-        
+        m.indexCount = faceIndices.length;
         IntBuffer ib;
         
         // create vao
@@ -35,18 +34,18 @@ public class Mesh {
         gl.glGenBuffers(1, ib);
         m.vbo = ib.get(0);
         // copy vertex data
-        m.vertexDataBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
+        FloatBuffer vertexDataBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, m.vbo);
-        gl.glBufferData(GL3.GL_ARRAY_BUFFER, m.vertexDataBuffer.limit() * 4, m.vertexDataBuffer, GL3.GL_STATIC_DRAW);
+        gl.glBufferData(GL3.GL_ARRAY_BUFFER, vertexDataBuffer.limit() * 4, vertexDataBuffer, GL3.GL_STATIC_DRAW);
         
         // create ebo
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenBuffers(1, ib);
         m.ebo = ib.get(0);
         // copy indices
-        m.faceIndicesBuffer = GLBuffers.newDirectIntBuffer(faceIndices);
+        IntBuffer faceIndicesBuffer = GLBuffers.newDirectIntBuffer(faceIndices);
         gl.glBindBuffer(GL3.GL_ELEMENT_ARRAY_BUFFER, m.ebo);
-        gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, m.faceIndicesBuffer.limit() * 4, m.faceIndicesBuffer, GL3.GL_STATIC_DRAW);
+        gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, faceIndicesBuffer.limit() * 4, faceIndicesBuffer, GL3.GL_STATIC_DRAW);
         
         // vertex attributes
         gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 8 * 4, 0);
@@ -64,7 +63,7 @@ public class Mesh {
     }
     
     public int getElementCount() {
-        return faceIndicesBuffer.limit();
+        return indexCount;
     }
     
 }

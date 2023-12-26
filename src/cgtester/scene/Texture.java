@@ -17,13 +17,11 @@ import com.jogamp.opengl.util.GLBuffers;
 public class Texture {
     
     private GL3 gl;
-    private BufferedImage textureData;
     private TextureProperties properties;
     private int textureID;
     
     private Texture(GL3 gl, BufferedImage textureData, TextureProperties properties) {
         this.gl = gl;
-        this.textureData = textureData;
         this.properties = properties;
         
         // create texture
