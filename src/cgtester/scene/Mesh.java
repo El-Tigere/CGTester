@@ -11,10 +11,11 @@ import com.jogamp.opengl.util.GLBuffers;
 public class Mesh {
     
     private GL3 gl;
+    private MeshProperties properties;
     private int vao, vbo, ebo;
     private int indexCount;
     
-    private Mesh(GL3 gl, float[] vertexData, int[] faceIndices) {
+    private Mesh(GL3 gl, float[] vertexData, int[] faceIndices, MeshProperties properties) {
         this.gl = gl;
         indexCount = faceIndices.length;
         
@@ -54,7 +55,7 @@ public class Mesh {
     }
     
     public static Mesh fromArrays(GL3 gl, float[] vertexData, int[] faceIndices) {
-        Mesh m = new Mesh(gl, vertexData, faceIndices);
+        Mesh m = new Mesh(gl, vertexData, faceIndices, null);
         
         return m;
     }
@@ -65,6 +66,15 @@ public class Mesh {
     
     public int getElementCount() {
         return indexCount;
+    }
+    
+    public static class MeshProperties {
+        public VertexAttribute[] vertexAttributes;
+        
+        public static class VertexAttribute {
+            public int index, size, type, offset;
+            public boolean normalized;
+        }
     }
     
 }
