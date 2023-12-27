@@ -1,17 +1,12 @@
 package cgtester;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Scanner;
-
-import javax.imageio.ImageIO;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2ES3;
@@ -23,6 +18,7 @@ import com.jogamp.opengl.util.GLBuffers;
 
 import cgtester.scene.Mesh;
 import cgtester.scene.Scene;
+import cgtester.scene.Texture;
 
 public class GLEvents implements GLEventListener {
     
@@ -50,8 +46,7 @@ public class GLEvents implements GLEventListener {
     private int matrixUniformLocation;
     private int samplerUniformLocation;
     
-    private BufferedImage textureData;
-    private int texture;
+    private Texture texure;
     
     public GLEvents(Scene scene) {
         this.scene = scene;
@@ -62,7 +57,6 @@ public class GLEvents implements GLEventListener {
         try {
             vertexShaderCode = loadShaderCode("./src/cgtester/shaders/test.vsh");
             fragmentShaderCode = loadShaderCode("./src/cgtester/shaders/test.fsh");
-            textureData = ImageIO.read(new File("src/cgtester/resources/test.png"));
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +65,6 @@ public class GLEvents implements GLEventListener {
     @Override
     public void init(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
-        IntBuffer ib;
         
         // set clear color
         clearColor.put(0, 0f).put(1, 0f).put(2, 0f).put(3, 1f);
@@ -87,18 +80,12 @@ public class GLEvents implements GLEventListener {
         shaderProgram = linkShaderProgram(gl, vertexShader, fragmentShader);
         
         // create texture
-        gl.glActiveTexture(GL3.GL_TEXTURE0);
-        ib = GLBuffers.newDirectIntBuffer(1);
-        gl.glGenTextures(1, ib);
-        texture = ib.get(0);
-        gl.glBindTexture(GL3.GL_TEXTURE_2D, texture);
-        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S, GL3.GL_REPEAT);
-        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T, GL3.GL_REPEAT);
-        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR_MIPMAP_LINEAR);
-        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_NEAREST);
-        Buffer textureBuffer = GLBuffers.newDirectByteBuffer(((DataBufferByte) textureData.getData().getDataBuffer()).getData());
-        gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_RGB, textureData.getWidth(), textureData.getHeight(), 0, GL3.GL_BGR, GL3.GL_UNSIGNED_BYTE, textureBuffer);
-        gl.glGenerateMipmap(GL3.GL_TEXTURE_2D);
+        try {
+            texure = Texture.fromJsonFile(gl, new File("src/cgtester/resources/textures/test.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         
         // delete shaders
         gl.glDeleteShader(vertexShader);
@@ -129,10 +116,16 @@ public class GLEvents implements GLEventListener {
         
         // draw triangles
         gl.glUseProgram(shaderProgram);
+        
         mesh.bindVAO();
+        
+        gl.glActiveTexture(GL3.GL_TEXTURE0);
+        texure.bindTexture();
         gl.glUniform1i(samplerUniformLocation, 0);
+        
         Matrix4f matrix = scene.getMainCamera().getCameraMatrix();
         gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, matrix.get(new float[16]), 0);
+        
         gl.glDrawElements(GL3.GL_TRIANGLES, mesh.getElementCount(), GL3.GL_UNSIGNED_INT, 0);
     }
     
