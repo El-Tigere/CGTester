@@ -27,17 +27,6 @@ public class GLEvents implements GLEventListener {
     
     private long lastNanos;
     
-    private float[] vertices = new float[] {
-        -0.5f, 0.5f, 0f,    1f, 0f, 0f,   0f, 0f,
-        -0.5f, -0.5f, 0f,   0f, 1f, 0f,   0f, 1f,
-        0.5f, 0.5f, 0f,     0f, 0f, 1f,   1f, 0f,
-        0.5f, -0.5f, 0f,    0f, 0f, 0f,   1f, 1f
-    };
-    private int[] vertIndices = new int[] {
-        0, 1, 2,
-        1, 3, 2
-    };
-    
     private FloatBuffer clearColor = GLBuffers.newDirectFloatBuffer(4);
     private Mesh mesh;
     private String vertexShaderCode;
@@ -70,7 +59,12 @@ public class GLEvents implements GLEventListener {
         clearColor.put(0, 0f).put(1, 0f).put(2, 0f).put(3, 1f);
         
         // load Mesh
-        mesh = Mesh.fromArrays(gl, vertices, vertIndices);
+        //mesh = Mesh.fromArrays(gl, vertices, vertIndices);
+        try {
+            mesh = Mesh.fromJsonFile(gl, new File("src/cgtester/resources/meshes/suzanne.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
         // create shaders
         int vertexShader = compileShader(gl, vertexShaderCode, GL3.GL_VERTEX_SHADER);
@@ -86,7 +80,6 @@ public class GLEvents implements GLEventListener {
             e.printStackTrace();
         }
         
-        
         // delete shaders
         gl.glDeleteShader(vertexShader);
         gl.glDeleteShader(fragmentShader);
@@ -95,8 +88,9 @@ public class GLEvents implements GLEventListener {
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
         samplerUniformLocation = gl.glGetUniformLocation(shaderProgram, "testSampler");
         
-        // set polygon mode
+        // further gl settings
         gl.glPolygonMode(GL3.GL_FRONT_AND_BACK, GL3.GL_FILL);
+        gl.glEnable(GL3.GL_DEPTH_TEST);
     }
     
     @Override
@@ -113,6 +107,7 @@ public class GLEvents implements GLEventListener {
 
         // clear color buffer
         gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
+        gl.glClear(GL3.GL_DEPTH_BUFFER_BIT);
         
         // draw triangles
         gl.glUseProgram(shaderProgram);
