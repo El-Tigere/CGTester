@@ -22,6 +22,8 @@ import cgtester.scene.Texture;
 
 public class GLEvents implements GLEventListener {
     
+    public static GL3 gl;
+    
     private Scene scene;
     private TesterState testerState;
     
@@ -53,7 +55,7 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void init(GLAutoDrawable drawable) {
-        GL3 gl = drawable.getGL().getGL3();
+        gl = drawable.getGL().getGL3();
         
         // set clear color
         clearColor.put(0, 0f).put(1, 0f).put(2, 0f).put(3, 1f);
@@ -95,7 +97,6 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void display(GLAutoDrawable drawable) {
-        GL3 gl = drawable.getGL().getGL3();
         
         // delta Time
         long currentNanos = System.nanoTime();
@@ -126,7 +127,6 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        GL3 gl = drawable.getGL().getGL3();
         gl.glViewport(0, 0, width, height);
     }
     
