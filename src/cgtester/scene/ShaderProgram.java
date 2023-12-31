@@ -4,19 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Scanner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.util.GLBuffers;
 
+import cgtester.GLEvents;
 import cgtester.Util;
 
 public class ShaderProgram {
     
     private GL3 gl;
-    private ShaderProgramProperties properties;
+    // private ShaderProgramProperties properties;
     private int shaderProgram;
     private int matrixUniformLocation;
     private int[] samplerLocations;
@@ -44,16 +43,11 @@ public class ShaderProgram {
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
         samplerLocations = new int[properties.samplers.length];
         for(int i = 0; i < properties.samplers.length; i++) { // TODO: check if more than 32 samplers were defined
-            samplerLocations[i] = gl.glGetUniformLocation(shaderProgram, properties.samplers[i].name);
-        }
-        
-        // set sampler uniforms
-        for(int i = 0; i < samplerLocations.length; i++) {
-            gl.glUniform1i(samplerLocations[i], i);
+            samplerLocations[i] = gl.glGetUniformLocation(shaderProgram, properties.samplers[i]);
         }
     }
     
-    public static ShaderProgram fromJsonFile(GL3 gl, File jsonFile) throws IOException {
+    public static ShaderProgram fromJsonFile(File jsonFile) throws IOException {
         // create ShaderProgramProperties
         ShaderProgramProperties properties = Util.loadFileObject(jsonFile, ShaderProgramProperties.class);
         
@@ -61,7 +55,7 @@ public class ShaderProgram {
         String vertexShaderCode = Util.loadFileString(properties.vertexShaderFile);
         String fragmentShaderCode = Util.loadFileString(properties.fragmentShaderFile);
         
-        return new ShaderProgram(gl, vertexShaderCode, fragmentShaderCode, properties);
+        return new ShaderProgram(GLEvents.gl, vertexShaderCode, fragmentShaderCode, properties);
     }
     
     private int compileShader(String shaderCode, int shaderType) {
@@ -113,23 +107,22 @@ public class ShaderProgram {
         return shaderProgramID;
     }
     
-    public void use() {
+    public void use(Matrix4f matrix) {
         gl.glUseProgram(shaderProgram);
-    }
-    
-    public void setMatrix(Matrix4f matrix) {
+        
+        // set sampler uniforms
+        for(int i = 0; i < samplerLocations.length; i++) {
+            gl.glUniform1i(samplerLocations[i], i);
+        }
+        
+        // set matrix
         gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, matrix.get(new float[16]), 0);
     }
     
     private static class ShaderProgramProperties {
         public String vertexShaderFile;
         public String fragmentShaderFile;
-        public SamplerUniform[] samplers;
-        
-        public static class SamplerUniform {
-            public String name;
-            public String texture;
-        }
+        public String[] samplers;
     }
     
 }
