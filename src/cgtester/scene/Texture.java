@@ -6,23 +6,24 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.IntBuffer;
-import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.GLBuffers;
+
+import cgtester.GLEvents;
+import cgtester.Util;
 
 public class Texture {
     
     private GL3 gl;
-    private TextureProperties properties;
+    // private TextureProperties properties;
     private int textureID;
     
     private Texture(GL3 gl, BufferedImage textureData, TextureProperties properties) {
         this.gl = gl;
-        this.properties = properties;
+        // this.properties = properties;
         
         // create texture
         IntBuffer ib = GLBuffers.newDirectIntBuffer(1);
@@ -42,21 +43,14 @@ public class Texture {
         gl.glGenerateMipmap(GL3.GL_TEXTURE_2D);
     }
     
-    public static Texture fromJsonFile(GL3 gl, File jsonFile) throws IOException {
-        // read JOSN file
-        Scanner s = new Scanner(jsonFile);
-        StringBuilder sb = new StringBuilder();
-        while(s.hasNextLine()) sb.append(s.nextLine() + '\n');
-        s.close();
-        
+    public static Texture fromJsonFile(File jsonFile) throws IOException {
         // create TextureProperties
-        ObjectMapper om = new ObjectMapper();
-        TextureProperties properties = om.readValue(sb.toString(), TextureProperties.class);
+        TextureProperties properties = Util.loadFileObject(jsonFile, TextureProperties.class);
         
         // load image
         BufferedImage bi = ImageIO.read(new File(properties.imageFile));
         
-        return new Texture(gl, bi, properties);
+        return new Texture(GLEvents.gl, bi, properties);
     }
     
     public void bindTexture() {
