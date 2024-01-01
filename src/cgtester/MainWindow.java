@@ -1,5 +1,7 @@
 package cgtester;
 
+import java.io.IOException;
+
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -7,6 +9,7 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.Animator;
 
+import cgtester.scene.ResourceManager;
 import cgtester.scene.Scene;
 
 public class MainWindow { // TODO: change to JFrame
@@ -22,7 +25,13 @@ public class MainWindow { // TODO: change to JFrame
     public MainWindow() {
         window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         
-        scene = Scene.createTestScene();
+        // create scene
+        try {
+            scene = ResourceManager.getFromName("scene0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         keys = new Keys(scene.getTesterState());
         window.addKeyListener(keys);
         glEvents = new GLEvents(scene);
