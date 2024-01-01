@@ -1,0 +1,7 @@
+{
+    "vertexShaderFile": "src/cgtester/resources/shaders/test.vsh",
+    "fragmentShaderFile": "src/cgtester/resources/shaders/test.fsh",
+    "samplers": [
+        "testSampler"
+    ]
+}
