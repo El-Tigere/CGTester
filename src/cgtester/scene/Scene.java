@@ -61,6 +61,10 @@ public class Scene {
         initialized = true;
     }
     
+    public void update(float deltaTime) {
+        mainCamera.update(testerState, deltaTime);
+    }
+    
     public void draw() {
         Matrix4f cameraMatrix = mainCamera.getCameraMatrix();
         

@@ -57,7 +57,7 @@ public class GLEvents implements GLEventListener {
         lastNanos = currentNanos;
         
         // update scene
-        scene.getMainCamera().update(testerState, deltaTime);
+        scene.update(deltaTime);
 
         // clear color buffer
         gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
