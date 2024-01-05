@@ -23,6 +23,8 @@ public class MainWindow { // TODO: change to JFrame
     private Scene scene;
     
     public MainWindow() {
+        TesterState.create(/*() -> reset()*/);
+        
         window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         
         // create scene
@@ -32,7 +34,7 @@ public class MainWindow { // TODO: change to JFrame
             e.printStackTrace();
         }
         
-        keys = new Keys(scene.getTesterState());
+        keys = new Keys();
         window.addKeyListener(keys);
         glEvents = new GLEvents(scene);
         window.addGLEventListener(glEvents);

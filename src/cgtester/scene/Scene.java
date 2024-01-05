@@ -16,9 +16,8 @@ public class Scene {
     private boolean initialized;
     private ArrayList<Instance> instances;
     private Camera mainCamera;
-    private TesterState testerState;
     
-    private Scene(SceneProperties properties, TesterState testerState) {
+    private Scene(SceneProperties properties) {
         initialized = false;
         this.properties = properties;
         this.testerState = testerState;
@@ -38,7 +37,7 @@ public class Scene {
         SceneProperties properties = Util.loadFileObject(jsonFile, SceneProperties.class);
         
         // create scene
-        Scene scene = new Scene(properties, new TesterState());
+        Scene scene = new Scene(properties);
         
         return scene;
     }

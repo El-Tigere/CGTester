@@ -7,8 +7,8 @@ public class Keys implements KeyListener {
     
     private TesterState testerState;
     
-    public Keys(TesterState testerState) {
-        this.testerState = testerState;
+    public Keys() {
+        testerState = TesterState.get();
     }
     
     @Override

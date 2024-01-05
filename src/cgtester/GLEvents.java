@@ -17,7 +17,6 @@ public class GLEvents implements GLEventListener {
     public static GL3 gl;
     
     private Scene scene;
-    private TesterState testerState;
     
     private long lastNanos;
     
@@ -25,7 +24,6 @@ public class GLEvents implements GLEventListener {
     
     public GLEvents(Scene scene) {
         this.scene = scene;
-        testerState = scene.getTesterState();
         lastNanos = -1;
     }
     
@@ -58,7 +56,7 @@ public class GLEvents implements GLEventListener {
         
         // update scene
         scene.update(deltaTime);
-
+        
         // clear color buffer
         gl.glClearBufferfv(GL2ES3.GL_COLOR, 0, clearColor);
         gl.glClear(GL3.GL_DEPTH_BUFFER_BIT);
