@@ -4,21 +4,21 @@ public class TesterState {
     
     private static TesterState instance;
     
-    //private Runnable resetWindow;
+    private Runnable resetWindow;
     
     public boolean[] keyStates;
     
     private boolean useVAOs;
     
-    private TesterState(/*Runnable resetWindow*/) {
-        //this.resetWindow = resetWindow;
+    private TesterState(Runnable resetWindow) {
+        this.resetWindow = resetWindow;
         
         keyStates = new boolean[256];
         useVAOs = true;
     }
     
-    static void create(/*Runnable resetWindow*/) {
-        instance = new TesterState(/*resetWindow*/);
+    static void create(Runnable resetWindow) {
+        instance = new TesterState(resetWindow);
     }
     
     public static TesterState get() {
@@ -29,7 +29,7 @@ public class TesterState {
     
     void setUseVAOs(boolean useEBOs) {
         this.useVAOs = useEBOs;
-        //resetWindow.run();
+        resetWindow.run();
     }
     
     public boolean getUseVAOs() {

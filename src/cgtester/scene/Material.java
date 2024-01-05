@@ -44,6 +44,13 @@ public class Material {
         shaderProgram.use(matrix);
     }
     
+    public void dispose() {
+        shaderProgram.dispose();
+        for(Texture t : textures) {
+            t.dispose();
+        }
+    }
+    
     private static class MaterialProperties {
         public String shaderProgram;
         public String[] textures;

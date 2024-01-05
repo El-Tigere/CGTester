@@ -61,7 +61,8 @@ public class Scene {
     }
     
     public void update(float deltaTime) {
-        mainCamera.update(testerState, deltaTime);
+        assert initialized;
+        mainCamera.update(deltaTime);
     }
     
     public void draw() {
@@ -69,6 +70,12 @@ public class Scene {
         
         for(Instance instance : instances) {
             instance.draw(cameraMatrix);
+        }
+    }
+    
+    public void dispose() {
+        for(Instance instance : instances) {
+            instance.dispose();
         }
     }
     

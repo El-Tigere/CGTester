@@ -125,6 +125,18 @@ public class Mesh {
         gl.glDrawElements(GL3.GL_TRIANGLES, indexCount, GL3.GL_UNSIGNED_INT, 0);
     }
     
+    public void dispose() {
+        IntBuffer ib;
+        
+        if(useVAOs) {
+            ib = GLBuffers.newDirectIntBuffer(new int[] {vao});
+            gl.glDeleteVertexArrays(1, ib);
+        }
+        
+        ib = GLBuffers.newDirectIntBuffer(new int[] {vbo, ebo});
+        gl.glDeleteBuffers(2, ib);
+    }
+    
     public static class MeshProperties {
         public String meshFile;
     }

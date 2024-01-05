@@ -27,6 +27,10 @@ public class GLEvents implements GLEventListener {
         lastNanos = -1;
     }
     
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+    
     @Override
     public void init(GLAutoDrawable drawable) {
         gl = drawable.getGL().getGL3();

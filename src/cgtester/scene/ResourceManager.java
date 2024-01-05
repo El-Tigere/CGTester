@@ -52,4 +52,8 @@ public class ResourceManager {
         return (T) hm.get(name);
     }
     
+    public static void clear() {
+        resources.clear();
+    }
+    
 }

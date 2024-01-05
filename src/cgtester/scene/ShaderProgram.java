@@ -119,6 +119,10 @@ public class ShaderProgram {
         gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, matrix.get(new float[16]), 0);
     }
     
+    public void dispose() {
+        gl.glDeleteProgram(shaderProgram);
+    }
+    
     private static class ShaderProgramProperties {
         public String vertexShaderFile;
         public String fragmentShaderFile;

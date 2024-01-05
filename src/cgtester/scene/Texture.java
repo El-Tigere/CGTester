@@ -57,6 +57,11 @@ public class Texture {
         gl.glBindTexture(GL3.GL_TEXTURE_2D, textureID);
     }
     
+    public void dispose() {
+        IntBuffer ib = GLBuffers.newDirectIntBuffer(new int[] {textureID});
+        gl.glDeleteTextures(1, ib);
+    }
+    
     private static class TextureProperties {
         public String imageFile;
         

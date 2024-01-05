@@ -24,4 +24,9 @@ public class Instance {
         return transform;
     }
     
+    public void dispose() {
+        mesh.dispose();
+        material.dispose();
+    }
+    
 }

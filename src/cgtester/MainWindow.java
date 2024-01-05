@@ -23,7 +23,7 @@ public class MainWindow { // TODO: change to JFrame
     private Scene scene;
     
     public MainWindow() {
-        TesterState.create(/*() -> reset()*/);
+        TesterState.create(() -> reset());
         
         window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         
@@ -57,6 +57,21 @@ public class MainWindow { // TODO: change to JFrame
         });
         
         window.setVisible(true);
+    }
+    
+    public void reset() {
+        // dispose resources
+        scene.dispose();
+        ResourceManager.clear();
+        
+        // create new scene
+        try {
+            scene = ResourceManager.getFromName("scene0");
+            glEvents.setScene(scene);
+            scene.init();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }
