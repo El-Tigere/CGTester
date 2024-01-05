@@ -12,6 +12,8 @@ public class Camera {
     public Vec3f position, rotation;
     public float fov, aspect, near, far;
     
+    private static final float HALF_PI = (float) Math.PI / 2;
+    
     public Camera(Vec3f position, Vec3f rotation, float fov, float aspect, float near, float far) {
         this.position = position;
         this.rotation = rotation;
@@ -29,19 +31,26 @@ public class Camera {
         return view.mul(cameraRotation).mul(cameraTranslation);
     }
     
-    public void update(TesterState testerState, float deltaTime) {
-        boolean[] k = testerState.keyStates;
+    public void update(float deltaTime) {
+        boolean[] k = TesterState.get().keyStates;
+        float move = (k[KeyEvent.VK_SHIFT] ? 10f : 2f) * deltaTime;
+        
+        // rotation
         if(k[KeyEvent.VK_UP]) rotation.add(1f * deltaTime, 0f, 0f);
         if(k[KeyEvent.VK_DOWN]) rotation.add(-1f * deltaTime, 0f, 0f);
         if(k[KeyEvent.VK_LEFT]) rotation.add(0f, 1f * deltaTime, 0f);
         if(k[KeyEvent.VK_RIGHT]) rotation.add(0f, -1f * deltaTime, 0f);
-        Quaternion q = new Quaternion().setFromEuler(rotation);
-        if(k[KeyEvent.VK_W]) position.add(q.rotateVector(new Vec3f(0f, 0f, -1f * deltaTime), new Vec3f()));
-        if(k[KeyEvent.VK_A]) position.add(q.rotateVector(new Vec3f(-1f * deltaTime, 0f, 0f), new Vec3f()));
-        if(k[KeyEvent.VK_S]) position.add(q.rotateVector(new Vec3f(0f, 0f, 1f * deltaTime), new Vec3f()));
-        if(k[KeyEvent.VK_D]) position.add(q.rotateVector(new Vec3f(1f * deltaTime, 0f, 0f), new Vec3f()));
-        if(k[KeyEvent.VK_E]) position.add(q.rotateVector(new Vec3f(0f, 1f * deltaTime, 0f), new Vec3f()));
-        if(k[KeyEvent.VK_Q]) position.add(q.rotateVector(new Vec3f(0f, -1f * deltaTime, 0f), new Vec3f()));
+        
+        // translation
+        float x = rotation.x();
+        rotation.setX(x < -HALF_PI ? -HALF_PI : x > HALF_PI ? HALF_PI : x);
+        Quaternion q = new Quaternion().setFromEuler(0f, rotation.y(), 0f);
+        if(k[KeyEvent.VK_W]) position.add(q.rotateVector(new Vec3f(0f, 0f, -move), new Vec3f()));
+        if(k[KeyEvent.VK_A]) position.add(q.rotateVector(new Vec3f(-move, 0f, 0f), new Vec3f()));
+        if(k[KeyEvent.VK_S]) position.add(q.rotateVector(new Vec3f(0f, 0f, move), new Vec3f()));
+        if(k[KeyEvent.VK_D]) position.add(q.rotateVector(new Vec3f(move, 0f, 0f), new Vec3f()));
+        if(k[KeyEvent.VK_E]) position.add(/*q.rotateVector(*/new Vec3f(0f, move, 0f)/*, new Vec3f())*/);
+        if(k[KeyEvent.VK_Q]) position.add(/*q.rotateVector(*/new Vec3f(0f, -move, 0f)/*, new Vec3f())*/);
     }
     
 }
