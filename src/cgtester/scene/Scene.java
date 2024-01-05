@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Vec3f;
 
-import cgtester.TesterState;
+import cgtester.GLEvents;
 import cgtester.Util;
 
 public class Scene {
@@ -20,16 +20,11 @@ public class Scene {
     private Scene(SceneProperties properties) {
         initialized = false;
         this.properties = properties;
-        this.testerState = testerState;
     }
     
     public Camera getMainCamera() {
         assert initialized;
         return mainCamera;
-    }
-    
-    public TesterState getTesterState() {
-        return testerState;
     }
     
     public static Scene fromJsonFile(File jsonFile) throws IOException {
@@ -43,6 +38,8 @@ public class Scene {
     }
     
     public void init() throws IOException {
+        assert GLEvents.gl != null;
+        
         // create camera
         SceneProperties.CameraProperties cp = properties.camera;
         mainCamera = new Camera(new Vec3f(cp.position), new Vec3f(cp.rotation), cp.fov, 1f, cp.near, cp.far);
