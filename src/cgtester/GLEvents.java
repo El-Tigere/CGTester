@@ -3,7 +3,6 @@ package cgtester;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
-import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;

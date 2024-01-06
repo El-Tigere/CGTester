@@ -2,19 +2,21 @@ package cgtester;
 
 import java.io.IOException;
 
-import com.jogamp.newt.event.WindowAdapter;
-import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.newt.opengl.GLWindow;
+import javax.swing.JFrame;
+
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.Animator;
 
 import cgtester.scene.ResourceManager;
 import cgtester.scene.Scene;
 
-public class MainWindow { // TODO: change to JFrame
+public class MainWindow {
     
-    private GLWindow window;
+    private JFrame frame;
+    private GLJPanel panel;
+    
     private Animator animator;
     
     private Keys keys;
@@ -25,7 +27,9 @@ public class MainWindow { // TODO: change to JFrame
     public MainWindow() {
         TesterState.create(() -> reset());
         
-        window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
+        frame = new JFrame();
+        panel = new GLJPanel(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
+        frame.add(panel);
         
         // create scene
         try {
@@ -35,28 +39,28 @@ public class MainWindow { // TODO: change to JFrame
         }
         
         keys = new Keys();
-        window.addKeyListener(keys);
+        panel.addKeyListener(keys);
         glEvents = new GLEvents(scene);
-        window.addGLEventListener(glEvents);
+        panel.addGLEventListener(glEvents);
         
-        window.setSize(800, 800);
-        window.setTitle("CGTester");
+        frame.setSize(800, 800);
+        frame.setTitle("CGTester");
         
         animator = new Animator();
-        animator.add(window);
+        animator.add(panel);
         animator.start();
         
-        window.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
-            public void windowDestroyed(WindowEvent e) {
-                new Thread(() -> {
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                new Thread(() -> { // TODO: why new thread here?
                     animator.stop();
                     System.exit(1); // should not be necessary
                 }).start();
             }
         });
         
-        window.setVisible(true);
+        frame.setVisible(true);
     }
     
     public void reset() {

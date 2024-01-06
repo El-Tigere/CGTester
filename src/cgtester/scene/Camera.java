@@ -1,6 +1,7 @@
 package cgtester.scene;
 
-import com.jogamp.newt.event.KeyEvent;
+import java.awt.event.KeyEvent;
+
 import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.Vec3f;

@@ -1,7 +1,6 @@
 package cgtester;
 
-import com.jogamp.newt.event.KeyEvent;
-import com.jogamp.newt.event.KeyListener;
+import java.awt.event.KeyListener;
 
 public class Keys implements KeyListener {
     
@@ -12,13 +11,17 @@ public class Keys implements KeyListener {
     }
     
     @Override
-    public void keyPressed(KeyEvent e) {
-        if(!e.isAutoRepeat()) testerState.keyStates[e.getKeyCode()] = true;
+    public void keyTyped(java.awt.event.KeyEvent e) {
     }
     
     @Override
-    public void keyReleased(KeyEvent e) {
-        if(!e.isAutoRepeat()) testerState.keyStates[e.getKeyCode()] = false;
+    public void keyPressed(java.awt.event.KeyEvent e) {
+        testerState.keyStates[e.getKeyCode()] = true;
+    }
+    
+    @Override
+    public void keyReleased(java.awt.event.KeyEvent e) {
+        testerState.keyStates[e.getKeyCode()] = false;
     }
     
 }
