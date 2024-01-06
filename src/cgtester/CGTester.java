@@ -3,6 +3,7 @@ package cgtester;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
@@ -12,7 +13,7 @@ import com.jogamp.opengl.util.Animator;
 import cgtester.scene.ResourceManager;
 import cgtester.scene.Scene;
 
-public class MainWindow {
+public class CGTester {
     
     private JFrame frame;
     private GLJPanel panel;
@@ -24,12 +25,8 @@ public class MainWindow {
     
     private Scene scene;
     
-    public MainWindow() {
+    public CGTester() {
         TesterState.create(() -> reset());
-        
-        frame = new JFrame();
-        panel = new GLJPanel(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
-        frame.add(panel);
         
         // create scene
         try {
@@ -38,18 +35,22 @@ public class MainWindow {
             e.printStackTrace();
         }
         
+        // create gl panel
+        panel = new GLJPanel(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         keys = new Keys();
         panel.addKeyListener(keys);
         glEvents = new GLEvents(scene);
         panel.addGLEventListener(glEvents);
         
-        frame.setSize(800, 800);
-        frame.setTitle("CGTester");
-        
         animator = new Animator();
         animator.add(panel);
         animator.start();
         
+        // create window
+        frame = new JFrame();
+        frame.add(panel);
+        frame.setSize(800, 800);
+        frame.setTitle("CGTester");
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
