@@ -16,7 +16,6 @@ import cgtester.Util;
 public class Mesh {
     
     private GL3 gl;
-    // private MeshProperties properties;
     private int vao, vbo, ebo;
     private int indexCount;
     
@@ -128,10 +127,8 @@ public class Mesh {
     public void dispose() {
         IntBuffer ib;
         
-        if(useVAOs) {
-            ib = GLBuffers.newDirectIntBuffer(new int[] {vao});
-            gl.glDeleteVertexArrays(1, ib);
-        }
+        ib = GLBuffers.newDirectIntBuffer(new int[] {vao});
+        gl.glDeleteVertexArrays(1, ib);
         
         ib = GLBuffers.newDirectIntBuffer(new int[] {vbo, ebo});
         gl.glDeleteBuffers(2, ib);

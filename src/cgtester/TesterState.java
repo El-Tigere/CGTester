@@ -6,15 +6,12 @@ public class TesterState {
     
     private Runnable resetWindow;
     
-    public boolean[] keyStates;
-    
-    private boolean useVAOs;
+    public boolean[] keyStates; // TODO: perhaps move this somewhere else
     
     private TesterState(Runnable resetWindow) {
         this.resetWindow = resetWindow;
         
         keyStates = new boolean[256];
-        useVAOs = true;
     }
     
     static void create(Runnable resetWindow) {
@@ -25,15 +22,6 @@ public class TesterState {
         assert instance != null;
         
         return instance;
-    }
-    
-    void setUseVAOs(boolean useEBOs) {
-        this.useVAOs = useEBOs;
-        resetWindow.run();
-    }
-    
-    public boolean getUseVAOs() {
-        return useVAOs;
     }
     
 }

@@ -51,7 +51,7 @@ public class GLEvents implements GLEventListener {
     
     @Override
     public void display(GLAutoDrawable drawable) {
-                
+        
         // delta Time
         long currentNanos = System.nanoTime();
         float deltaTime = lastNanos == -1 ? 0f : (currentNanos - lastNanos) / 1_000_000_000f;
