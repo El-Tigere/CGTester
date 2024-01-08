@@ -45,12 +45,13 @@ public class CGTester {
         animator = new Animator();
         animator.add(panel);
         animator.start();
+        animator.setUpdateFPSFrames(60, System.out);
         
         // create window
-        frame = new JFrame();
-        frame.add(panel);
-        frame.setSize(800, 800);
+        frame = new TesterWindow(panel);
+        frame.setSize(800, 600);
         frame.setTitle("CGTester");
+        frame.setLocationRelativeTo(null);
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
