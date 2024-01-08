@@ -7,6 +7,7 @@ import java.nio.IntBuffer;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.math.Matrix4f;
+import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.util.GLBuffers;
 
 import cgtester.GLEvents;
@@ -18,6 +19,7 @@ public class ShaderProgram {
     // private ShaderProgramProperties properties;
     private int shaderProgram;
     private int matrixUniformLocation;
+    private int sunDirectionUniformLocation;
     private int[] samplerLocations;
     
     // private String vertexShaderCode;
@@ -41,6 +43,8 @@ public class ShaderProgram {
         
         // get uniform locations
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
+        sunDirectionUniformLocation = gl.glGetUniformLocation(shaderProgram, "sunDirection");
+        System.out.println(sunDirectionUniformLocation);
         samplerLocations = new int[properties.samplers.length];
         for(int i = 0; i < properties.samplers.length; i++) { // TODO: check if more than 32 samplers were defined
             samplerLocations[i] = gl.glGetUniformLocation(shaderProgram, properties.samplers[i]);
@@ -107,16 +111,15 @@ public class ShaderProgram {
         return shaderProgramID;
     }
     
-    public void use(Matrix4f matrix) {
+    public void use(Matrix4f matrix, Vec3f sunDirection) {
         gl.glUseProgram(shaderProgram);
         
-        // set sampler uniforms
+        // set uniforms
+        gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, matrix.get(new float[16]), 0);
+        if(sunDirectionUniformLocation >= 0) gl.glUniform3fv(sunDirectionUniformLocation, 1, sunDirection.get(new float[3]), 0);
         for(int i = 0; i < samplerLocations.length; i++) {
             gl.glUniform1i(samplerLocations[i], i);
         }
-        
-        // set matrix
-        gl.glUniformMatrix4fv(matrixUniformLocation, 1, false, matrix.get(new float[16]), 0);
     }
     
     public void dispose() {

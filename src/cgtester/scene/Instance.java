@@ -1,6 +1,7 @@
 package cgtester.scene;
 
 import com.jogamp.opengl.math.Matrix4f;
+import com.jogamp.opengl.math.Vec3f;
 
 public class Instance {
     
@@ -14,9 +15,9 @@ public class Instance {
         this.transform = transform;
     }
     
-    public void draw(Matrix4f cameraMatrix) {
+    public void draw(Matrix4f cameraMatrix, Vec3f sunDirection) {
         Matrix4f matrix = new Matrix4f(cameraMatrix).mul(transform.getTransformationMatrix());
-        material.use(matrix);
+        material.use(matrix, sunDirection);
         mesh.draw();
     }
     

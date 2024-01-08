@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.math.Matrix4f;
+import com.jogamp.opengl.math.Vec3f;
 
 import cgtester.GLEvents;
 import cgtester.Util;
@@ -34,14 +35,14 @@ public class Material {
         return new Material(GLEvents.gl, shaderProgram, textures);
     }
     
-    public void use(Matrix4f matrix) {
+    public void use(Matrix4f matrix, Vec3f sunDirection) {
         // bind textures
         for(int i = 0; i < textures.length; i++) {
             gl.glActiveTexture(GL3.GL_TEXTURE0 + i);
             textures[i].bindTexture();
         }
         
-        shaderProgram.use(matrix);
+        shaderProgram.use(matrix, sunDirection);
     }
     
     public void dispose() {

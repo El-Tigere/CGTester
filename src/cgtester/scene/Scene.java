@@ -16,6 +16,7 @@ public class Scene {
     private boolean initialized;
     private ArrayList<Instance> instances;
     private Camera mainCamera;
+    private Vec3f sunDirection;
     
     private Scene(SceneProperties properties) {
         initialized = false;
@@ -53,6 +54,9 @@ public class Scene {
             instances.add(new Instance(mesh, material, transform));
         }
         
+        // set sun direction
+        sunDirection = new Vec3f(properties.sunDirection);
+        
         // scene is initialized
         initialized = true;
     }
@@ -66,7 +70,7 @@ public class Scene {
         Matrix4f cameraMatrix = mainCamera.getCameraMatrix();
         
         for(Instance instance : instances) {
-            instance.draw(cameraMatrix);
+            instance.draw(cameraMatrix, sunDirection);
         }
     }
     
@@ -79,6 +83,7 @@ public class Scene {
     private static class SceneProperties {
         public CameraProperties camera;
         public InstanceProperties[] instances;
+        public float[] sunDirection;
         
         public static class CameraProperties {
             public float[] position, rotation;
