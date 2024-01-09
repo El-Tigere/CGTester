@@ -44,7 +44,6 @@ public class ShaderProgram {
         // get uniform locations
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
         sunDirectionUniformLocation = gl.glGetUniformLocation(shaderProgram, "sunDirection");
-        System.out.println(sunDirectionUniformLocation);
         samplerLocations = new int[properties.samplers.length];
         for(int i = 0; i < properties.samplers.length; i++) { // TODO: check if more than 32 samplers were defined
             samplerLocations[i] = gl.glGetUniformLocation(shaderProgram, properties.samplers[i]);
