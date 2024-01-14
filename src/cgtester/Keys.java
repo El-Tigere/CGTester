@@ -4,10 +4,10 @@ import java.awt.event.KeyListener;
 
 public class Keys implements KeyListener {
     
-    private TesterState testerState;
+    private boolean[] keyStates;
     
     public Keys() {
-        testerState = TesterState.get();
+        keyStates = TesterState.get().keyStates;
     }
     
     @Override
@@ -16,12 +16,12 @@ public class Keys implements KeyListener {
     
     @Override
     public void keyPressed(java.awt.event.KeyEvent e) {
-        testerState.keyStates[e.getKeyCode()] = true;
+        keyStates[e.getKeyCode()] = true;
     }
     
     @Override
     public void keyReleased(java.awt.event.KeyEvent e) {
-        testerState.keyStates[e.getKeyCode()] = false;
+        keyStates[e.getKeyCode()] = false;
     }
     
 }
