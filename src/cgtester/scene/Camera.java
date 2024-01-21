@@ -25,11 +25,17 @@ public class Camera {
     }
     
     public Matrix4f getCameraMatrix() {
+        Matrix4f vFlipMatrix = new Matrix4f(new float[] {
+            1f, 0f, 0f, 0f,
+            0f, -1f, 0f, 0f,
+            0f, 0f, 1f, 0f,
+            0f, 0f, 0f, 1f
+        });
         Matrix4f view = new Matrix4f().setToPerspective(fov, aspect, near, far);
         Matrix4f cameraTranslation = new Matrix4f().setToTranslation(position.mul(-1));
         Matrix4f cameraRotation = new Matrix4f().setToRotation(new Quaternion().setFromEuler(rotation).invert());
         
-        return view.mul(cameraRotation).mul(cameraTranslation);
+        return vFlipMatrix.mul(view).mul(cameraRotation).mul(cameraTranslation);
     }
     
     public void update(float deltaTime) {
