@@ -1,6 +1,7 @@
 package cgtester;
 
 import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 
 public class Keys implements KeyListener {
     
@@ -11,16 +12,16 @@ public class Keys implements KeyListener {
     }
     
     @Override
-    public void keyTyped(java.awt.event.KeyEvent e) {
+    public void keyTyped(KeyEvent e) {
     }
     
     @Override
-    public void keyPressed(java.awt.event.KeyEvent e) {
+    public void keyPressed(KeyEvent e) {
         keyStates[e.getKeyCode()] = true;
     }
     
     @Override
-    public void keyReleased(java.awt.event.KeyEvent e) {
+    public void keyReleased(KeyEvent e) {
         keyStates[e.getKeyCode()] = false;
     }
     
