@@ -2,14 +2,19 @@ package cgtester;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JRadioButton;
+
+import com.jogamp.opengl.awt.GLJPanel;
 
 import cgtester.TesterState.VertexAttributes;
 
@@ -17,19 +22,26 @@ public class TesterWindow extends JFrame {
     
     private TesterState testerState;
     
-    private Component gLPanel;
+    private GroupLayout l;
+    
+    private Component glJPanel;
     
     private ButtonGroup vaGroup; // vertex attribute button group
     private JRadioButton[] vaButtons;
     
-    public TesterWindow(Component glPanel) {
-        this.gLPanel = glPanel;
+    public TesterWindow() {
+        this.glJPanel = new Container();
         
         testerState = TesterState.get();
         
         initComponents();
         
         setLayout();
+    }
+    
+    public void setGlPanel(Component glJPanel) {
+        l.replace(this.glJPanel, glJPanel);
+        this.glJPanel = glJPanel;
     }
     
     private void initComponents() {
@@ -53,20 +65,20 @@ public class TesterWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 runnable.run();
-                gLPanel.requestFocus();
+                glJPanel.requestFocus();
             }
         });
     }
     
     private void setLayout() {
         Container contentPane = getContentPane();
-        GroupLayout l = new GroupLayout(contentPane);
+        l = new GroupLayout(contentPane);
         contentPane.setLayout(l);
         
         l.setHorizontalGroup(l.createSequentialGroup()
             .addGap(10)
             .addGroup(l.createSequentialGroup()
-                .addComponent(gLPanel)
+                .addComponent(glJPanel)
                 .addGap(10)
                 .addGroup(l.createParallelGroup()
                     .addComponent(vaButtons[0])
@@ -78,7 +90,7 @@ public class TesterWindow extends JFrame {
         l.setVerticalGroup(l.createSequentialGroup()
             .addGap(10)
             .addGroup(l.createParallelGroup()
-                .addComponent(gLPanel)
+                .addComponent(glJPanel)
                 .addGroup(l.createSequentialGroup()
                     .addComponent(vaButtons[0])
                     .addComponent(vaButtons[1])

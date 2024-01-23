@@ -13,6 +13,7 @@ public class TesterState {
         this.resetWindow = resetWindow;
         
         keyStates = new boolean[256];
+        
         vertexAttributes = VertexAttributes.POS_NORMAL_UV;
     }
     
@@ -26,13 +27,18 @@ public class TesterState {
         return instance;
     }
     
+    private void reset() {
+        keyStates = new boolean[256];
+        resetWindow.run();
+    }
+    
     public VertexAttributes getVertexAttributes() {
         return vertexAttributes;
     }
     
     void setVertexAttributes(VertexAttributes vertexAttributes) {
         this.vertexAttributes = vertexAttributes;
-        resetWindow.run();
+        reset();
     }
     
     public enum VertexAttributes {

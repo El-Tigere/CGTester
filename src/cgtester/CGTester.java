@@ -2,8 +2,6 @@ package cgtester;
 
 import java.io.IOException;
 
-import javax.swing.JFrame;
-
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -13,7 +11,7 @@ import cgtester.scene.Scene;
 
 public class CGTester {
     
-    private JFrame frame;
+    private TesterWindow frame;
     private GLJPanel panel;
     
     private Keys keys;
@@ -28,24 +26,8 @@ public class CGTester {
     public CGTester() {
         TesterState.create(() -> reset());
         
-        // create scene
-        try {
-            scene = ResourceManager.getFromName("scene0");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        // create gl panel
-        panel = new GLJPanel(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
-        keys = new Keys();
-        panel.addKeyListener(keys);
-        glEvents = new GLEvents(scene);
-        panel.addGLEventListener(glEvents);
-        
-        panel.setSkipGLOrientationVerticalFlip(true);
-        
         // create window
-        frame = new TesterWindow(panel);
+        frame = new TesterWindow();
         frame.setSize(800, 600);
         frame.setTitle("CGTester");
         frame.setLocationRelativeTo(null);
@@ -59,18 +41,42 @@ public class CGTester {
            }
         });
         
-        panel.requestFocus();
         frame.setVisible(true);
+        
+        createPanel();
         
         // start render loop
         startRenderLoop();
+    }
+    
+    private void createPanel() {
+        //frame.setGlPanel(new Container());
+        // create scene
+        try {
+            scene = ResourceManager.getFromName("scene0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        // create gl panel
+        panel = new GLJPanel(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
+        keys = new Keys();
+        panel.addKeyListener(keys);
+        glEvents = new GLEvents(scene, frame);
+        panel.addGLEventListener(glEvents);
+        
+        panel.setSkipGLOrientationVerticalFlip(true); // very important!
+        
+        frame.setGlPanel(panel);
+        
+        panel.requestFocus();
     }
     
     private void startRenderLoop() {
         renderThread = new Thread(() -> {
             running = true;
             
-            long nspf = 1_000_000_000 / FPS;
+            final long nspf = 1_000_000_000 / FPS;
             
             long lastNanos = System.nanoTime();
             long currentNanos;
@@ -84,7 +90,7 @@ public class CGTester {
                 lastNanos = currentNanos;
                 
                 frameTime += diff;
-                if(frameTime > nspf) {
+                if(frameTime >= nspf) {
                     frameTime -= nspf;
                     //float deltaTime = diff / 1_000_000_000f;
                     panel.display();
@@ -110,17 +116,9 @@ public class CGTester {
             GLEvents.gl.glFinish(); // wait for GL Objects to be deleted
             
             // create new scene
-            try {
-                scene = ResourceManager.getFromName("scene0");
-                glEvents.setScene(scene);
-                scene.init();
-                GLEvents.gl.glFinish();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            createPanel();
             
             startRenderLoop();
         }).run();
-        
     }
 }
