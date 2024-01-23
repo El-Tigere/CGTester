@@ -97,7 +97,7 @@ public class Mesh {
         int[] faceIndices = new int[faceIndicesList.size()];
         for(int i = 0; i < faceIndicesList.size(); i++) faceIndices[i] = faceIndicesList.get(i);
         
-        return new Mesh(GLEvents.gl, vertexData, faceIndices, properties);
+        return new Mesh(GLEvents.getGL(), vertexData, faceIndices, properties);
     }
     
     private static float[] parseFloatArray(String string) {

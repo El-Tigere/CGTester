@@ -39,7 +39,7 @@ public class Scene {
     }
     
     public void init() throws IOException {
-        assert GLEvents.gl != null;
+        assert GLEvents.getGL() != null;
         
         // create camera
         SceneProperties.CameraProperties cp = properties.camera;

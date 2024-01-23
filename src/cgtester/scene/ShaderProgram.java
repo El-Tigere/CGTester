@@ -58,7 +58,7 @@ public class ShaderProgram {
         String vertexShaderCode = Util.loadFileString(properties.vertexShaderFile);
         String fragmentShaderCode = Util.loadFileString(properties.fragmentShaderFile);
         
-        return new ShaderProgram(GLEvents.gl, vertexShaderCode, fragmentShaderCode, properties);
+        return new ShaderProgram(GLEvents.getGL(), vertexShaderCode, fragmentShaderCode, properties);
     }
     
     private int compileShader(String shaderCode, int shaderType) {

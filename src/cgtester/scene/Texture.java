@@ -50,7 +50,7 @@ public class Texture {
         // load image
         BufferedImage bi = ImageIO.read(new File(properties.imageFile));
         
-        return new Texture(GLEvents.gl, bi, properties);
+        return new Texture(GLEvents.getGL(), bi, properties);
     }
     
     public void bindTexture() {

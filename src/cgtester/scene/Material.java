@@ -32,7 +32,7 @@ public class Material {
             textures[i] = ResourceManager.getFromName(properties.textures[i]);
         }
         
-        return new Material(GLEvents.gl, shaderProgram, textures);
+        return new Material(GLEvents.getGL(), shaderProgram, textures);
     }
     
     public void use(Matrix4f matrix, Vec3f sunDirection) {

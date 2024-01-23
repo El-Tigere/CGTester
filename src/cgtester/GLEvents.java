@@ -10,7 +10,7 @@ import cgtester.scene.Scene;
 
 public class GLEvents implements GLEventListener {
     
-    public static GL3 gl;
+    private static GL3 gl;
     
     private Scene scene;
     
@@ -21,8 +21,8 @@ public class GLEvents implements GLEventListener {
         lastNanos = -1;
     }
     
-    public void setScene(Scene scene) {
-        this.scene = scene;
+    public static GL3 getGL() {
+        return gl;
     }
     
     @Override
