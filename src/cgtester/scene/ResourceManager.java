@@ -4,56 +4,59 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-// TODO
 public class ResourceManager {
-    private static HashMap<Class<?>, HashMap<String, Object>> resources = new HashMap<>();
-    private static HashMap<Class<?>, String> resourceLocations = new HashMap<>();
+    private static HashMap<Class<? extends Resource>, OneResourceManager<? extends Resource>> managers = new HashMap<>();
     
-    static {
-        resourceLocations.put(Material.class, "src/cgtester/resources/materials/");
-        resourceLocations.put(Mesh.class, "src/cgtester/resources/meshes/");
-        resourceLocations.put(Scene.class, "src/cgtester/resources/scenes/");
-        resourceLocations.put(ShaderProgram.class, "src/cgtester/resources/shaders/");
-        resourceLocations.put(Texture.class, "src/cgtester/resources/textures/");
+    public static <T extends Resource> void registerType(Class<T> resourceClass, String resourceLocation, ResourceSupplier<T> supplier) {
+        managers.put(resourceClass, new OneResourceManager<>(resourceLocation, supplier));
     }
     
-    public static <T> T getFromName(String name, T... junk) throws IOException {
-        Class<T> resourceClass = (Class<T>) junk.getClass().getComponentType();
-        if(!resources.containsKey(resourceClass)) {
-            resources.put(resourceClass, new HashMap<>());
-        }
-        HashMap<String, Object> hm = resources.get(resourceClass);
+    public static <T extends Resource> T getFromName(String name, Class<T> resourceClass) throws IOException {
+        assert managers.containsKey(resourceClass);
         
-        if(!hm.containsKey(name)) {
-            Object o = null;
-            File jsonFile = new File(resourceLocations.get(resourceClass) + name + ".json");
-            switch(resourceClass.getName()) {
-                case "cgtester.scene.Material":
-                    o = Material.fromJsonFile(jsonFile);
-                    break;
-                case "cgtester.scene.Mesh":
-                    o = Mesh.fromJsonFile(jsonFile);
-                    break;
-                case "cgtester.scene.Scene":
-                    o = Scene.fromJsonFile(jsonFile);
-                    break;
-                case "cgtester.scene.ShaderProgram":
-                    o = ShaderProgram.fromJsonFile(jsonFile);
-                    break;
-                case "cgtester.scene.Texture":
-                    o = Texture.fromJsonFile(jsonFile);
-                    break;
-                default:
-                    System.err.println("Invalid Resource Type: " + resourceClass.getName());
-            }
-            hm.put(name, o);
-        }
+        @SuppressWarnings("unchecked")
+        OneResourceManager<T> om = (OneResourceManager<T>) managers.get(resourceClass);
         
-        return (T) hm.get(name);
+        return om.getFromName(name);
     }
     
     public static void clear() {
-        resources.clear();
+        managers.forEach((key, value) -> {
+            value.resources.clear();
+        });
+    }
+    
+    private static class OneResourceManager<T extends Resource> {
+        public HashMap<String, T> resources = new HashMap<>();
+        public String resourceLocations;
+        public ResourceSupplier<T> supplier;
+        
+        public OneResourceManager(String resourceLocation, ResourceSupplier<T> supplier) {
+            this.resourceLocations = resourceLocation;
+            this.supplier = supplier;
+        }
+        
+        public T getFromName(String name) {
+            if(resources.containsKey(name)) return resources.get(name);
+            
+            File jsonFile = new File(resourceLocations + name + ".json");
+            
+            try {
+                T newResource = supplier.get(jsonFile);
+                resources.put(name, newResource);
+                return newResource;
+            } catch (IOException e) {
+                System.err.println("Error: failed to load resource");
+                e.printStackTrace();
+            }
+            
+            return null;
+        }
+    }
+    
+    @FunctionalInterface
+    public static interface ResourceSupplier<T> {
+        public T get(File jsonFile) throws IOException;
     }
     
 }

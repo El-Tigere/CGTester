@@ -10,7 +10,7 @@ import com.jogamp.opengl.math.Vec3f;
 import cgtester.GLEvents;
 import cgtester.Util;
 
-public class Material {
+public class Material extends Resource {
     
     private GL3 gl;
     private ShaderProgram shaderProgram;
@@ -26,10 +26,10 @@ public class Material {
         // create MaterialProperties
         MaterialProperties properties = Util.loadFileObject(jsonFile, MaterialProperties.class);
         
-        ShaderProgram shaderProgram = ResourceManager.getFromName(properties.shaderProgram);
+        ShaderProgram shaderProgram = ResourceManager.getFromName(properties.shaderProgram, ShaderProgram.class);
         Texture[] textures = new Texture[properties.textures.length];
         for(int i = 0; i < textures.length; i++) {
-            textures[i] = ResourceManager.getFromName(properties.textures[i]);
+            textures[i] = ResourceManager.getFromName(properties.textures[i], Texture.class);
         }
         
         return new Material(GLEvents.getGL(), shaderProgram, textures);
@@ -45,7 +45,8 @@ public class Material {
         shaderProgram.use(matrix, sunDirection);
     }
     
-    public void dispose() {
+    @Override
+    public void onDispose() {
         shaderProgram.dispose();
         for(Texture t : textures) {
             t.dispose();

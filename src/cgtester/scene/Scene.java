@@ -10,7 +10,7 @@ import com.jogamp.opengl.math.Vec3f;
 import cgtester.GLEvents;
 import cgtester.Util;
 
-public class Scene {
+public class Scene extends Resource {
     
     private SceneProperties properties;
     private boolean initialized;
@@ -48,8 +48,8 @@ public class Scene {
         // create instances
         instances = new ArrayList<>();
         for(SceneProperties.InstanceProperties ip : properties.instances) {
-            Mesh mesh = ResourceManager.getFromName(ip.mesh);
-            Material material = ResourceManager.getFromName(ip.material);
+            Mesh mesh = ResourceManager.getFromName(ip.mesh, Mesh.class);
+            Material material = ResourceManager.getFromName(ip.material, Material.class);
             Transform transform = new Transform(new Vec3f(ip.position), new Vec3f(ip.rotation), new Vec3f(ip.scale));
             instances.add(new Instance(mesh, material, transform));
         }
@@ -67,6 +67,8 @@ public class Scene {
     }
     
     public void draw() {
+        assert initialized;
+        
         Matrix4f cameraMatrix = mainCamera.getCameraMatrix();
         
         for(Instance instance : instances) {
@@ -74,7 +76,10 @@ public class Scene {
         }
     }
     
-    public void dispose() {
+    @Override
+    public void onDispose() {
+        assert initialized;
+        
         for(Instance instance : instances) {
             instance.dispose();
         }

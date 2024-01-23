@@ -15,7 +15,7 @@ import com.jogamp.opengl.util.GLBuffers;
 import cgtester.GLEvents;
 import cgtester.Util;
 
-public class Texture {
+public class Texture extends Resource {
     
     private GL3 gl;
     // private TextureProperties properties;
@@ -57,7 +57,8 @@ public class Texture {
         gl.glBindTexture(GL3.GL_TEXTURE_2D, textureID);
     }
     
-    public void dispose() {
+    @Override
+    public void onDispose() {
         IntBuffer ib = GLBuffers.newDirectIntBuffer(new int[] {textureID});
         gl.glDeleteTextures(1, ib);
     }

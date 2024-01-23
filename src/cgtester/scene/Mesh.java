@@ -13,13 +13,13 @@ import com.jogamp.opengl.util.GLBuffers;
 import cgtester.GLEvents;
 import cgtester.Util;
 
-public class Mesh {
+public class Mesh extends Resource {
     
     private GL3 gl;
     private int vao, vbo, ebo;
     private int indexCount;
     
-    private Mesh(GL3 gl, float[] vertexData, int[] faceIndices, MeshProperties properties) {
+    private Mesh(GL3 gl, float[] vertexData, int[] faceIndices, MeshProperties properties) {        
         this.gl = gl;
         indexCount = faceIndices.length;
         
@@ -28,16 +28,20 @@ public class Mesh {
         // create vao
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenVertexArrays(1, ib);
+        //System.out.println("error: " + gl.glGetError());
         vao = ib.get(0);
+        //System.out.println("vao: " + vao);
         gl.glBindVertexArray(vao);
         
         // create vbo
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenBuffers(1, ib);
         vbo = ib.get(0);
+        //System.out.println("vbo: " + vbo);
         // copy vertex data
         FloatBuffer vertexDataBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo);
+        //System.out.println(gl.getBoundBuffer(GL3.GL_ARRAY_BUFFER));
         gl.glBufferData(GL3.GL_ARRAY_BUFFER, vertexDataBuffer.limit() * 4, vertexDataBuffer, GL3.GL_STATIC_DRAW);
         
         // create ebo
@@ -59,6 +63,7 @@ public class Mesh {
     }
     
     public static Mesh fromJsonFile(File jsonFile) throws IOException { // TODO: less datatstructure conversions
+        //System.out.println("Mesh fromJsonFile " + jsonFile + " start");
         // create MeshProperties
         MeshProperties properties = Util.loadFileObject(jsonFile, MeshProperties.class);
         
@@ -124,7 +129,8 @@ public class Mesh {
         gl.glDrawElements(GL3.GL_TRIANGLES, indexCount, GL3.GL_UNSIGNED_INT, 0);
     }
     
-    public void dispose() {
+    @Override
+    public void onDispose() {
         IntBuffer ib;
         
         ib = GLBuffers.newDirectIntBuffer(new int[] {vao});
@@ -134,7 +140,7 @@ public class Mesh {
         gl.glDeleteBuffers(2, ib);
     }
     
-    public static class MeshProperties {
+    private static class MeshProperties {
         public String meshFile;
     }
     

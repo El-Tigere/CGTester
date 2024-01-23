@@ -13,7 +13,7 @@ import com.jogamp.opengl.util.GLBuffers;
 import cgtester.GLEvents;
 import cgtester.Util;
 
-public class ShaderProgram {
+public class ShaderProgram extends Resource {
     
     private GL3 gl;
     // private ShaderProgramProperties properties;
@@ -121,8 +121,11 @@ public class ShaderProgram {
         }
     }
     
-    public void dispose() {
+    @Override
+    public void onDispose() {
         gl.glDeleteProgram(shaderProgram);
+        IntBuffer ib = GLBuffers.newDirectIntBuffer(samplerLocations);
+        gl.glDeleteSamplers(samplerLocations.length, ib);
     }
     
     private static class ShaderProgramProperties {

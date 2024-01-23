@@ -6,8 +6,12 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 
+import cgtester.scene.Material;
+import cgtester.scene.Mesh;
 import cgtester.scene.ResourceManager;
 import cgtester.scene.Scene;
+import cgtester.scene.ShaderProgram;
+import cgtester.scene.Texture;
 
 public class CGTester {
     
@@ -24,7 +28,15 @@ public class CGTester {
     private static final int FPS = 60;
     
     public CGTester() {
+        // init TesterState
         TesterState.create(() -> reset());
+        
+        // init ResourceManager
+        ResourceManager.registerType(Material.class, "src/cgtester/resources/materials/", (f) -> Material.fromJsonFile(f));
+        ResourceManager.registerType(Mesh.class, "src/cgtester/resources/meshes/", (f) -> Mesh.fromJsonFile(f));
+        ResourceManager.registerType(Scene.class, "src/cgtester/resources/scenes/", (f) -> Scene.fromJsonFile(f));
+        ResourceManager.registerType(ShaderProgram.class, "src/cgtester/resources/shaders/", (f) -> ShaderProgram.fromJsonFile(f));
+        ResourceManager.registerType(Texture.class, "src/cgtester/resources/textures/", (f) -> Texture.fromJsonFile(f));
         
         // create window
         frame = new TesterWindow();
@@ -53,7 +65,7 @@ public class CGTester {
         //frame.setGlPanel(new Container());
         // create scene
         try {
-            scene = ResourceManager.getFromName("scene0");
+            scene = ResourceManager.getFromName("scene0", Scene.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,7 +74,7 @@ public class CGTester {
         panel = new GLJPanel(new GLCapabilities(GLProfile.get(GLProfile.GL3)));
         keys = new Keys();
         panel.addKeyListener(keys);
-        glEvents = new GLEvents(scene, frame);
+        glEvents = new GLEvents(scene);
         panel.addGLEventListener(glEvents);
         
         panel.setSkipGLOrientationVerticalFlip(true); // very important!
@@ -113,7 +125,7 @@ public class CGTester {
             // dispose resources
             scene.dispose();
             ResourceManager.clear();
-            GLEvents.gl.glFinish(); // wait for GL Objects to be deleted
+            GLEvents.getGL().glFinish(); // wait for GL Objects to be deleted
             
             // create new scene
             createPanel();
