@@ -18,12 +18,10 @@ import cgtester.Util;
 public class Texture extends Resource {
     
     private GL3 gl;
-    // private TextureProperties properties;
     private int textureID;
     
     private Texture(GL3 gl, BufferedImage textureData, TextureProperties properties) {
         this.gl = gl;
-        // this.properties = properties;
         
         // create texture
         IntBuffer ib = GLBuffers.newDirectIntBuffer(1);

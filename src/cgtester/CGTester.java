@@ -62,7 +62,6 @@ public class CGTester {
     }
     
     private void createPanel() {
-        //frame.setGlPanel(new Container());
         // create scene
         try {
             scene = ResourceManager.getFromName("scene0", Scene.class);

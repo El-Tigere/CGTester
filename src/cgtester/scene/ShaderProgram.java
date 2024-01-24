@@ -16,16 +16,10 @@ import cgtester.Util;
 public class ShaderProgram extends Resource {
     
     private GL3 gl;
-    // private ShaderProgramProperties properties;
     private int shaderProgram;
     private int matrixUniformLocation;
     private int sunDirectionUniformLocation;
     private int[] samplerLocations;
-    
-    // private String vertexShaderCode;
-    // private String fragmentShaderCode;
-    // private int matrixUniformLocation;
-    // private int samplerUniformLocation;
     
     private ShaderProgram(GL3 gl, String vertexShaderCode, String fragmentShaderCode, ShaderProgramProperties properties) {
         this.gl = gl;
@@ -70,7 +64,6 @@ public class ShaderProgram extends Resource {
         // get success
         IntBuffer ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGetShaderiv(shaderID, GL3.GL_COMPILE_STATUS, ib);
-        //System.out.println(ib.get(0));
         
         // get error message if necessary
         if(ib.get(0) == 0) {

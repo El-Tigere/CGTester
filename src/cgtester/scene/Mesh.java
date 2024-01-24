@@ -28,20 +28,16 @@ public class Mesh extends Resource {
         // create vao
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenVertexArrays(1, ib);
-        //System.out.println("error: " + gl.glGetError());
         vao = ib.get(0);
-        //System.out.println("vao: " + vao);
         gl.glBindVertexArray(vao);
         
         // create vbo
         ib = GLBuffers.newDirectIntBuffer(1);
         gl.glGenBuffers(1, ib);
         vbo = ib.get(0);
-        //System.out.println("vbo: " + vbo);
         // copy vertex data
         FloatBuffer vertexDataBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, vbo);
-        //System.out.println(gl.getBoundBuffer(GL3.GL_ARRAY_BUFFER));
         gl.glBufferData(GL3.GL_ARRAY_BUFFER, vertexDataBuffer.limit() * 4, vertexDataBuffer, GL3.GL_STATIC_DRAW);
         
         // create ebo
@@ -63,7 +59,6 @@ public class Mesh extends Resource {
     }
     
     public static Mesh fromJsonFile(File jsonFile) throws IOException { // TODO: less datatstructure conversions
-        //System.out.println("Mesh fromJsonFile " + jsonFile + " start");
         // create MeshProperties
         MeshProperties properties = Util.loadFileObject(jsonFile, MeshProperties.class);
         
