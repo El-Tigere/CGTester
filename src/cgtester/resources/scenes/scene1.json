@@ -1,0 +1,19 @@
+{
+    "camera": {
+        "position": [0, 0, 5],
+        "rotation": [0, 0, 0],
+        "fov": 70,
+        "near": 0.1,
+        "far": 100
+    },
+    "instances": [
+        {
+            "mesh": "suzanne",
+            "material": "test",
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1]
+        }
+    ],
+    "sunDirection": [-0.2, -1, -1]
+}
