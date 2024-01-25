@@ -42,10 +42,26 @@ public class TesterState {
     }
     
     public enum VertexAttributes {
-        UV,
-        POS_UV,
-        POS_NORMAL_UV,
-        POS_NORMAL_COLOR
+        UV (2, 0b0001),
+        POS_UV (3 + 2, 0b1001),
+        POS_NORMAL_UV (3 + 3 + 2, 0b1101),
+        POS_NORMAL_COLOR (3 + 3 + 3, 0b1110);
+        
+        private int valueCount;
+        private int attibuteMask;
+        
+        VertexAttributes(int attributeCount, int attributeMask) {
+            this.valueCount = attributeCount;
+            this.attibuteMask = attributeMask;
+        }
+        
+        public int getValueCount() {
+            return valueCount;
+        }
+        
+        public int getAttributeMask() {
+            return attibuteMask;
+        }
     }
     
 }

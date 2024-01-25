@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.GLBuffers;
 
 import cgtester.GLEvents;
+import cgtester.TesterState;
 import cgtester.Util;
+import cgtester.TesterState.VertexAttributes;
 
 public class Mesh extends Resource {
     
@@ -62,41 +66,57 @@ public class Mesh extends Resource {
         // create MeshProperties
         MeshProperties properties = Util.loadFileObject(jsonFile, MeshProperties.class);
         
-        // load obj
-        ArrayList<float[]> positions = new ArrayList<>();
+        ArrayList<float[]> positionsAndColors = new ArrayList<>();
         ArrayList<float[]> normals = new ArrayList<>();
         ArrayList<float[]> uvs = new ArrayList<>();
-        ArrayList<Float> vertexDataList = new ArrayList<>();
+        HashMap<Vertex, Integer> vertexHashMap = new HashMap<>();
+        ArrayList<Vertex> vertexArrayList = new ArrayList<>();
         ArrayList<Integer> faceIndicesList = new ArrayList<>();
         int nextFaceIndex = 0;
         
+        // load obj
         Scanner objScanner = new Scanner(new File(properties.meshFile));
         while(objScanner.hasNextLine()) {
             String line = objScanner.nextLine();
             
-            if(line.startsWith("v ")) positions.add(parseFloatArray(line.substring(2)));
+            if(line.startsWith("v ")) positionsAndColors.add(parseFloatArray(line.substring(2)));
             if(line.startsWith("vn ")) normals.add(parseFloatArray(line.substring(3)));
             if(line.startsWith("vt ")) uvs.add(parseFloatArray(line.substring(3)));
             
             if(line.startsWith("f ")) {
                 int[][] indices = parseVertexIndices(line.substring(2));
                 for(int[] vertex : indices) {
-                    for(float f : positions.get(vertex[0] - 1)) vertexDataList.add(f);
-                    for(float f : normals.get(vertex[2] - 1)) vertexDataList.add(f);
-                    for(float f : uvs.get(vertex[1] - 1)) vertexDataList.add(f);
+                    Vertex v = new Vertex(vertex);
                     
-                    faceIndicesList.add(nextFaceIndex++);
+                    if(vertexHashMap.containsKey(v)) {
+                        faceIndicesList.add(vertexHashMap.get(v));
+                        continue;
+                    }
+                    
+                    vertexHashMap.put(v, nextFaceIndex);
+                    faceIndicesList.add(nextFaceIndex);
+                    vertexArrayList.add(v);
+                    nextFaceIndex++;
                 }
             }
         }
         objScanner.close();
         
-        // convert ArrayLists to Arrays
-        float[] vertexData = new float[vertexDataList.size()];
-        for(int i = 0; i < vertexDataList.size(); i++) vertexData[i] = vertexDataList.get(i);
+        // create vertex data array
+        VertexAttributes attributes = TesterState.get().getVertexAttributes();
+        int attributeMask = attributes.getAttributeMask();
+        float[] vertexData = new float[vertexArrayList.size() * attributes.getValueCount()];
+        int vertexDataIndex = 0;
+        for(Vertex v : vertexArrayList) {
+            if((attributeMask & 0b1000) > 0) for(int i = 0; i < 3; i++) vertexData[vertexDataIndex++] = positionsAndColors.get(v.ids[0] - 1)[i]; // - 1 because obj vertex property indices start at 1
+            if((attributeMask & 0b0100) > 0) for(int i = 0; i < 3; i++) vertexData[vertexDataIndex++] = normals.get(v.ids[2] - 1)[i]; // obj vertex property index order: position+color, uv, normal
+            if((attributeMask & 0b0010) > 0) for(int i = 3; i < 6; i++) vertexData[vertexDataIndex++] = positionsAndColors.get(v.ids[0] - 1)[i];
+            if((attributeMask & 0b0001) > 0) for(int i = 0; i < 2; i++) vertexData[vertexDataIndex++] = uvs.get(v.ids[1] - 1)[i];
+        }
         int[] faceIndices = new int[faceIndicesList.size()];
         for(int i = 0; i < faceIndicesList.size(); i++) faceIndices[i] = faceIndicesList.get(i);
         
+        System.out.println(vertexData.length);
         return new Mesh(GLEvents.getGL(), vertexData, faceIndices, properties);
     }
     
@@ -133,6 +153,25 @@ public class Mesh extends Resource {
         
         ib = GLBuffers.newDirectIntBuffer(new int[] {vbo, ebo});
         gl.glDeleteBuffers(2, ib);
+    }
+    
+    private static class Vertex {
+        public int[] ids;
+        
+        public Vertex(int ids[]) {
+            this.ids = ids;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(ids);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof Vertex)) return false;
+            return Arrays.equals(ids, ((Vertex) obj).ids);
+        }
     }
     
     private static class MeshProperties {
