@@ -50,8 +50,23 @@ public class Scene extends Resource {
         for(SceneProperties.InstanceProperties ip : properties.instances) {
             Mesh mesh = ResourceManager.getFromName(ip.mesh, Mesh.class);
             Material material = ResourceManager.getFromName(ip.material, Material.class);
-            Transform transform = new Transform(new Vec3f(ip.position), new Vec3f(ip.rotation), new Vec3f(ip.scale));
-            instances.add(new Instance(mesh, material, transform));
+            
+            if(ip.grid == null) {
+                Transform transform = new Transform(ip.position, ip.rotation, ip.scale);
+                instances.add(new Instance(mesh, material, transform));
+            } else {
+                for(int x = 0; x < ip.grid.size[0]; x++)
+                for(int y = 0; y < ip.grid.size[1]; y++)
+                for(int z = 0; z < ip.grid.size[2]; z++) {
+                    float[] position = new float[] {
+                        ip.position[0] + x * ip.grid.offset[0],
+                        ip.position[1] + y * ip.grid.offset[1],
+                        ip.position[2] + z * ip.grid.offset[2]
+                    };
+                    Transform transform = new Transform(position, ip.rotation, ip.scale);
+                    instances.add(new Instance(mesh, material, transform));
+                }
+            }
         }
         
         // set sun direction
@@ -98,6 +113,11 @@ public class Scene extends Resource {
         public static class InstanceProperties {
             public String mesh, material;
             public float[] position, rotation, scale;
+            public GridProperties grid;
+        }
+        
+        public static class GridProperties {
+            public float[] size, offset;
         }
     }
     
