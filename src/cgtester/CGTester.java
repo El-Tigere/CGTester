@@ -130,6 +130,6 @@ public class CGTester {
             createPanel();
             
             startRenderLoop();
-        }).run();
+        }).start();
     }
 }
