@@ -9,6 +9,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 
 import cgtester.TesterState.VertexAttributes;
@@ -23,6 +24,8 @@ public class TesterWindow extends JFrame {
     
     private ButtonGroup vaGroup; // vertex attribute button group
     private JRadioButton[] vaButtons;
+    
+    private JLabel performanceLabel;
     
     public TesterWindow() {
         this.glJPanel = new Container();
@@ -39,7 +42,11 @@ public class TesterWindow extends JFrame {
         this.glJPanel = glJPanel;
     }
     
-    private void initComponents() {
+    public void setPerformance(String p) {
+        performanceLabel.setText(p);
+    }
+    
+    private void initComponents() { // TODO: add listeners when window has fully loaded
         // vertex Attributes
         vaGroup = new ButtonGroup();
         vaButtons = new JRadioButton[4];
@@ -51,6 +58,9 @@ public class TesterWindow extends JFrame {
         addButtonListener(vaButtons[2], () -> testerState.setVertexAttributes(VertexAttributes.POS_NORMAL_UV));
         vaButtons[3] = new JRadioButton("Position, Normal, Color", false);
         addButtonListener(vaButtons[3], () -> testerState.setVertexAttributes(VertexAttributes.POS_NORMAL_COLOR));
+        
+        // performance label
+        performanceLabel = new JLabel();
         
         for(JRadioButton b : vaButtons) vaGroup.add(b);
     }
@@ -76,10 +86,15 @@ public class TesterWindow extends JFrame {
                 .addComponent(glJPanel)
                 .addGap(10)
                 .addGroup(l.createParallelGroup()
-                    .addComponent(vaButtons[0])
-                    .addComponent(vaButtons[1])
-                    .addComponent(vaButtons[2])
-                    .addComponent(vaButtons[3])))
+                    .addGroup(l.createParallelGroup()
+                        .addComponent(vaButtons[0])
+                        .addComponent(vaButtons[1])
+                        .addComponent(vaButtons[2])
+                        .addComponent(vaButtons[3])
+                    )
+                    .addComponent(performanceLabel)
+                )
+            )
             .addGap(10)
         );
         l.setVerticalGroup(l.createSequentialGroup()
@@ -87,10 +102,16 @@ public class TesterWindow extends JFrame {
             .addGroup(l.createParallelGroup()
                 .addComponent(glJPanel)
                 .addGroup(l.createSequentialGroup()
-                    .addComponent(vaButtons[0])
-                    .addComponent(vaButtons[1])
-                    .addComponent(vaButtons[2])
-                    .addComponent(vaButtons[3])))
+                    .addGroup(l.createSequentialGroup()
+                        .addComponent(vaButtons[0])
+                        .addComponent(vaButtons[1])
+                        .addComponent(vaButtons[2])
+                        .addComponent(vaButtons[3])
+                    )
+                    .addGap(10)
+                    .addComponent(performanceLabel)
+                )
+            )
             .addGap(10)
         );
     }

@@ -102,9 +102,11 @@ public class CGTester {
                 
                 frameTime += diff;
                 if(frameTime >= nspf) {
-                    frameTime -= nspf;
-                    //float deltaTime = diff / 1_000_000_000f;
+                    frameTime %= nspf; // skip frames if frameTime reaches 2*nspf so that frameTime does not keep increasing
+                    
                     panel.display();
+                    GLEvents.getGL().glFinish();
+                    frame.setPerformance((System.nanoTime() - currentNanos) / 1_000_000_000f + "");
                 }
             }
         }, "CGTester-render-thread");
