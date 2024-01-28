@@ -42,17 +42,23 @@ public class TesterState {
     }
     
     public enum VertexAttributes {
-        UV (2, 0b0001),
-        POS_UV (3 + 2, 0b1001),
-        POS_NORMAL_UV (3 + 3 + 2, 0b1101),
-        POS_NORMAL_COLOR (3 + 3 + 3, 0b1110);
+        UV("uv", 0b0001),
+        POS_UV("positionUv", 0b1001),
+        POS_NORMAL_UV("positionNormalUv", 0b1101),
+        POS_NORMAL_COLOR("positionNormalColor", 0b1110);
         
-        private int valueCount;
+        private String name;
         private int attibuteMask;
+        private int valueCount;
         
-        VertexAttributes(int attributeCount, int attributeMask) {
-            this.valueCount = attributeCount;
+        VertexAttributes(String name, int attributeMask) {
+            this.name = name;
             this.attibuteMask = attributeMask;
+            valueCount = calcValueCount(attributeMask);
+        }
+        
+        public String getName() {
+            return name;
         }
         
         public int getValueCount() {
@@ -61,6 +67,13 @@ public class TesterState {
         
         public int getAttributeMask() {
             return attibuteMask;
+        }
+        
+        public static int calcValueCount(int attributeMask) {
+            return ((attributeMask & 0b1000) > 0 ? 3 : 0)
+                + ((attributeMask & 0b0100) > 0 ? 3 : 0)
+                + ((attributeMask & 0b0010) > 0 ? 3 : 0)
+                + ((attributeMask & 0b0001) > 0 ? 2 : 0);
         }
     }
     

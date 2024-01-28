@@ -54,12 +54,19 @@ public class Mesh extends Resource {
         gl.glBufferData(GL3.GL_ELEMENT_ARRAY_BUFFER, faceIndicesBuffer.limit() * 4, faceIndicesBuffer, GL3.GL_STATIC_DRAW);
         
         // vertex attributes
-        gl.glVertexAttribPointer(0, 3, GL3.GL_FLOAT, false, 8 * 4, 0);
-        gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(1, 3, GL3.GL_FLOAT, false, 8 * 4, 3 * 4);
-        gl.glEnableVertexAttribArray(1);
-        gl.glVertexAttribPointer(2, 2, GL3.GL_FLOAT, false, 8 * 4, 6 * 4);
-        gl.glEnableVertexAttribArray(2);
+        VertexAttributes attributes = TesterState.get().getVertexAttributes();
+        int attributeMask = attributes.getAttributeMask();
+        int locationCounter = 0;
+        int offsetCounter = 0;
+        for(int i = 0; i < 4; i++) {
+            int compareMask = 0b1000 >> i;
+            if((attributeMask & compareMask) > 0) {
+                int valueCount = VertexAttributes.calcValueCount(compareMask);
+                gl.glVertexAttribPointer(locationCounter, valueCount, GL3.GL_FLOAT, false, attributes.getValueCount() * 4, offsetCounter * 4);
+                gl.glEnableVertexAttribArray(locationCounter++);
+                offsetCounter += valueCount;
+            }
+        }
     }
     
     public static Mesh fromJsonFile(File jsonFile) throws IOException { // TODO: less datatstructure conversions
@@ -107,7 +114,7 @@ public class Mesh extends Resource {
         int attributeMask = attributes.getAttributeMask();
         float[] vertexData = new float[vertexArrayList.size() * attributes.getValueCount()];
         int vertexDataIndex = 0;
-        for(Vertex v : vertexArrayList) {
+        for(Vertex v : vertexArrayList) { // insert vertex data into array
             if((attributeMask & 0b1000) > 0) for(int i = 0; i < 3; i++) vertexData[vertexDataIndex++] = positionsAndColors.get(v.ids[0] - 1)[i]; // - 1 because obj vertex property indices start at 1
             if((attributeMask & 0b0100) > 0) for(int i = 0; i < 3; i++) vertexData[vertexDataIndex++] = normals.get(v.ids[2] - 1)[i]; // obj vertex property index order: position+color, uv, normal
             if((attributeMask & 0b0010) > 0) for(int i = 3; i < 6; i++) vertexData[vertexDataIndex++] = positionsAndColors.get(v.ids[0] - 1)[i];
@@ -116,7 +123,6 @@ public class Mesh extends Resource {
         int[] faceIndices = new int[faceIndicesList.size()];
         for(int i = 0; i < faceIndicesList.size(); i++) faceIndices[i] = faceIndicesList.get(i);
         
-        System.out.println(vertexData.length);
         return new Mesh(GLEvents.getGL(), vertexData, faceIndices, properties);
     }
     

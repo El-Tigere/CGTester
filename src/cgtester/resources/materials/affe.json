@@ -3,6 +3,6 @@
     "textures": [
         "affe_position",
         "affe_normal",
-        "test"
+        "affe_color"
     ]
 }

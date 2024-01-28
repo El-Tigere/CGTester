@@ -1,7 +1,34 @@
 {
-    "vertexShaderFile": "src/cgtester/resources/shaders/lit.vsh",
-    "fragmentShaderFile": "src/cgtester/resources/shaders/lit.fsh",
-    "samplers": [
-        "colorSampler"
+    "variants": [
+        {
+            "vertexAttributes": "uv",
+            "vertexShaderFile": "src/cgtester/resources/shaders/lit_u.vsh",
+            "fragmentShaderFile": "src/cgtester/resources/shaders/lit_u.fsh",
+            "samplers": [
+                "positionSampler", "normalSampler", "colorSampler"
+            ]
+        },
+        {
+            "vertexAttributes": "positionUv",
+            "vertexShaderFile": "src/cgtester/resources/shaders/lit_pu.vsh",
+            "fragmentShaderFile": "src/cgtester/resources/shaders/lit_pu.fsh",
+            "samplers": [
+                "normalSampler", "colorSampler"
+            ]
+        },
+        {
+            "vertexAttributes": "positionNormalUv",
+            "vertexShaderFile": "src/cgtester/resources/shaders/lit_pnu.vsh",
+            "fragmentShaderFile": "src/cgtester/resources/shaders/lit_pnu.fsh",
+            "samplers": [
+                "colorSampler"
+            ]
+        },
+        {
+            "vertexAttributes": "positionNormalColor",
+            "vertexShaderFile": "src/cgtester/resources/shaders/lit_pnc.vsh",
+            "fragmentShaderFile": "src/cgtester/resources/shaders/lit_pnc.fsh",
+            "samplers": []
+        }
     ]
 }

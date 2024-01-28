@@ -1,6 +1,8 @@
 {
     "shaderProgram": "lit",
     "textures": [
+        "affe_position",
+        "affe_normal",
         "test2"
     ]
 }

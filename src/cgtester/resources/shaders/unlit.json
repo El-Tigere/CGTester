@@ -1,7 +1,0 @@
-{
-    "vertexShaderFile": "src/cgtester/resources/shaders/unlit.vsh",
-    "fragmentShaderFile": "src/cgtester/resources/shaders/unlit.fsh",
-    "samplers": [
-        "colorSampler"
-    ]
-}

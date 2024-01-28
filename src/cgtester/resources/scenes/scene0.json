@@ -1,6 +1,6 @@
 {
     "camera": {
-        "position": [0, 0, 0],
+        "position": [0, 0, 5],
         "rotation": [0, 0, 0],
         "fov": 70,
         "near": 0.1,
@@ -9,9 +9,9 @@
     "instances": [
         {
             "mesh": "suzanne",
-            "material": "test",
+            "material": "affe",
             "position": [0, 0, 0],
-            "rotation": [2, 0, 0],
+            "rotation": [0, 0, 0],
             "scale": [1, 1, 1]
         },
         {
@@ -24,36 +24,22 @@
         {
             "mesh": "suzanne",
             "material": "test2",
-            "position": [0, 3, 0],
-            "rotation": [1, 0, -1],
-            "scale": [2, 2, 2]
-        },
-        {
-            "mesh": "untitled",
-            "material": "test2",
-            "position": [5, 0, 0],
-            "rotation": [0, 0, 0],
-            "scale": [1, 1, 1]
-        },
-        {
-            "mesh": "untitled",
-            "material": "test",
-            "position": [0, 4, 5],
-            "rotation": [0, 0, 0],
-            "scale": [1, 1, 1]
-        },
-        {
-            "mesh": "suzanne",
-            "material": "test",
-            "position": [5, 3, 0],
-            "rotation": [1, 0, -1],
+            "position": [0, -3, 0],
+            "rotation": [-1, 0, 1],
             "scale": [2, 2, 2]
         },
         {
             "mesh": "suzanne",
             "material": "test",
-            "position": [10, 3, 0],
-            "rotation": [1, 0, -1],
+            "position": [5, -3, 0],
+            "rotation": [-1, 0, 1],
+            "scale": [2, 2, 2]
+        },
+        {
+            "mesh": "suzanne",
+            "material": "test",
+            "position": [10, -3, 0],
+            "rotation": [-1, 0, 1],
             "scale": [2, 2, 2]
         }
     ],

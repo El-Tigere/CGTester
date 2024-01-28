@@ -8,6 +8,7 @@ import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Vec3f;
 
 import cgtester.GLEvents;
+import cgtester.TesterState;
 import cgtester.Util;
 
 public class Material extends Resource {
@@ -26,10 +27,22 @@ public class Material extends Resource {
         // create MaterialProperties
         MaterialProperties properties = Util.loadFileObject(jsonFile, MaterialProperties.class);
         
+        // create ShaderProgram
         ShaderProgram shaderProgram = ResourceManager.getFromName(properties.shaderProgram, ShaderProgram.class);
-        Texture[] textures = new Texture[properties.textures.length];
-        for(int i = 0; i < textures.length; i++) {
-            textures[i] = ResourceManager.getFromName(properties.textures[i], Texture.class);
+        
+        // create textures
+        int attributeMask = TesterState.get().getVertexAttributes().getAttributeMask();
+        int textureCount = ((attributeMask & 0b1000) == 0 ? 1 : 0)
+            + ((attributeMask & 0b0100) == 0 ? 1 : 0)
+            + ((attributeMask & 0b0010) == 0 ? 1 : 0);
+        
+        assert properties.textures.length >= textureCount;
+        Texture[] textures = new Texture[textureCount];
+        int indexCounter = 0;
+        for(int i = 0; i < 3; i++) {
+            if((attributeMask & (0b1000 >> i)) == 0) {
+                textures[indexCounter++] = ResourceManager.getFromName(properties.textures[i], Texture.class);
+            }
         }
         
         return new Material(GLEvents.getGL(), shaderProgram, textures);

@@ -9,11 +9,11 @@
     "instances": [
         {
             "mesh": "suzanne",
-            "material": "test",
+            "material": "affe",
             "position": [0, 0, 0],
             "rotation": [0, 0, 0],
             "scale": [1, 1, 1]
         }
     ],
-    "sunDirection": [-0.2, -1, -1]
+    "sunDirection": [0, -1, 0]
 }

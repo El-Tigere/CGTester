@@ -11,6 +11,7 @@ import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.util.GLBuffers;
 
 import cgtester.GLEvents;
+import cgtester.TesterState;
 import cgtester.Util;
 
 public class ShaderProgram extends Resource {
@@ -21,7 +22,7 @@ public class ShaderProgram extends Resource {
     private int sunDirectionUniformLocation;
     private int[] samplerLocations;
     
-    private ShaderProgram(GL3 gl, String vertexShaderCode, String fragmentShaderCode, ShaderProgramProperties properties) {
+    private ShaderProgram(GL3 gl, String vertexShaderCode, String fragmentShaderCode, ShaderProgramProperties.Variant variant) {
         this.gl = gl;
         
         // create shaders
@@ -38,9 +39,9 @@ public class ShaderProgram extends Resource {
         // get uniform locations
         matrixUniformLocation = gl.glGetUniformLocation(shaderProgram, "matr");
         sunDirectionUniformLocation = gl.glGetUniformLocation(shaderProgram, "sunDirection");
-        samplerLocations = new int[properties.samplers.length];
-        for(int i = 0; i < properties.samplers.length; i++) { // TODO: check if more than 32 samplers were defined
-            samplerLocations[i] = gl.glGetUniformLocation(shaderProgram, properties.samplers[i]);
+        samplerLocations = new int[variant.samplers.length];
+        for(int i = 0; i < variant.samplers.length; i++) { // TODO: check if more than 32 samplers were defined
+            samplerLocations[i] = gl.glGetUniformLocation(shaderProgram, variant.samplers[i]);
         }
     }
     
@@ -48,11 +49,19 @@ public class ShaderProgram extends Resource {
         // create ShaderProgramProperties
         ShaderProgramProperties properties = Util.loadFileObject(jsonFile, ShaderProgramProperties.class);
         
-        // load shader code
-        String vertexShaderCode = Util.loadFileString(properties.vertexShaderFile);
-        String fragmentShaderCode = Util.loadFileString(properties.fragmentShaderFile);
+        // get variant
+        String vertexAttributes = TesterState.get().getVertexAttributes().getName();
+        ShaderProgramProperties.Variant variant = null;
+        for(ShaderProgramProperties.Variant v : properties.variants) {
+            if(v.vertexAttributes.equals(vertexAttributes)) variant = v;
+        }
+        assert variant != null;
         
-        return new ShaderProgram(GLEvents.getGL(), vertexShaderCode, fragmentShaderCode, properties);
+        // load shader code
+        String vertexShaderCode = Util.loadFileString(variant.vertexShaderFile);
+        String fragmentShaderCode = Util.loadFileString(variant.fragmentShaderFile);
+        
+        return new ShaderProgram(GLEvents.getGL(), vertexShaderCode, fragmentShaderCode, variant);
     }
     
     private int compileShader(String shaderCode, int shaderType) {
@@ -122,9 +131,14 @@ public class ShaderProgram extends Resource {
     }
     
     private static class ShaderProgramProperties {
-        public String vertexShaderFile;
-        public String fragmentShaderFile;
-        public String[] samplers;
+        public Variant variants[];
+        
+        public static class Variant {
+            public String vertexAttributes;
+            public String vertexShaderFile;
+            public String fragmentShaderFile;
+            public String[] samplers;
+        }
     }
     
 }
