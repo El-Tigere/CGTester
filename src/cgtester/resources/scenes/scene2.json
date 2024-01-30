@@ -1,0 +1,23 @@
+{
+    "camera": {
+        "position": [0, 0, 5],
+        "rotation": [0, 0, 0],
+        "fov": 70,
+        "near": 1,
+        "far": 1000
+    },
+    "instances": [
+        {
+            "mesh": "suzanne",
+            "material": "affe",
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1],
+            "grid": {
+                "size": [100, 100, 100],
+                "offset": [3, 2, -2]
+            }
+        }
+    ],
+    "sunDirection": [0, -1, 0]
+}
