@@ -1,5 +1,7 @@
 package cgtester.scene;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -36,8 +38,15 @@ public class Texture extends Resource {
         gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, properties.textureMagFilter);
         
         // load image data
-        Buffer textureBuffer = GLBuffers.newDirectByteBuffer(((DataBufferByte) textureData.getData().getDataBuffer()).getData());
-        gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_RGB, textureData.getWidth(), textureData.getHeight(), 0, GL3.GL_BGR, GL3.GL_UNSIGNED_BYTE, textureBuffer);
+        BufferedImage textureData3Byte = new BufferedImage(textureData.getWidth(), textureData.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        Graphics2D graphics = textureData3Byte.createGraphics();
+        AffineTransform transform = AffineTransform.getScaleInstance(1, -1);
+        transform.concatenate(AffineTransform.getTranslateInstance(0, -textureData.getHeight()));
+        graphics.transform(transform);
+        graphics.drawImage(textureData, 0, 0, null);
+        
+        Buffer textureBuffer = GLBuffers.newDirectByteBuffer(((DataBufferByte) textureData3Byte.getData().getDataBuffer()).getData());
+        gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_RGB, textureData3Byte.getWidth(), textureData3Byte.getHeight(), 0, GL3.GL_BGR, GL3.GL_UNSIGNED_BYTE, textureBuffer);
         gl.glGenerateMipmap(GL3.GL_TEXTURE_2D);
     }
     
