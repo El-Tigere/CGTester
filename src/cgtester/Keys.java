@@ -17,11 +17,13 @@ public class Keys implements KeyListener {
     
     @Override
     public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() >= 256) return;
         keyStates[e.getKeyCode()] = true;
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
+        if(e.getKeyCode() >= 256) return;
         keyStates[e.getKeyCode()] = false;
     }
     
