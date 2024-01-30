@@ -6,7 +6,7 @@ public class TesterState {
     
     private Runnable resetWindow;
     
-    public boolean[] keyStates; // TODO: perhaps move this somewhere else
+    private boolean[] keyStates; // TODO: perhaps move this somewhere else
     private VertexAttributes vertexAttributes;
     
     private TesterState(Runnable resetWindow) {
@@ -39,6 +39,10 @@ public class TesterState {
     void setVertexAttributes(VertexAttributes vertexAttributes) {
         this.vertexAttributes = vertexAttributes;
         reset();
+    }
+    
+    public boolean[] getKeyStates() {
+        return keyStates;
     }
     
     public enum VertexAttributes {

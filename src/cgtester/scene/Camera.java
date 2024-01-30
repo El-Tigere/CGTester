@@ -39,7 +39,7 @@ public class Camera {
     }
     
     public void update(float deltaTime) {
-        boolean[] k = TesterState.get().keyStates;
+        boolean[] k = TesterState.get().getKeyStates();
         float move = (k[KeyEvent.VK_SHIFT] ? 10f : 2f) * deltaTime;
         
         // rotation

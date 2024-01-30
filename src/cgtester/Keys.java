@@ -8,7 +8,7 @@ public class Keys implements KeyListener {
     private boolean[] keyStates;
     
     public Keys() {
-        keyStates = TesterState.get().keyStates;
+        keyStates = TesterState.get().getKeyStates();
     }
     
     @Override
